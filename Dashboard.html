@@ -9,7 +9,7 @@
     <style>
         body { margin: 0; display: flex; height: 100vh; background-color: #0b0d12; color: white; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; overflow: hidden; }
 
-        /* Sidebar Plegable y Romano */
+        /* Sidebar Plegable */
         .sidebar { width: 80px; background-color: #12151e; border-right: 1px solid #1f2533; padding: 20px 0; transition: width 0.3s ease; overflow: hidden; white-space: nowrap; flex-shrink: 0; z-index: 10; }
         .sidebar:hover { width: 260px; }
 
@@ -30,28 +30,32 @@
         /* Chat de Token Lab */
         .chat-container { display: flex; flex-direction: column; gap: 15px; }
         #chat-window { height: 400px; background: #0b0d12; border-radius: 12px; padding: 20px; overflow-y: auto; border: 1px solid #232a3b; font-family: 'Courier New', Courier, monospace; font-size: 14px; line-height: 1.5; color: #a5b4fc; }
-        .msg { margin-bottom: 12px; padding: 8px 12px; border-radius: 8px; max-width: 85%; }
-        .msg.user { background: #1f2533; align-self: flex-end; color: white; border-bottom-right-radius: 2px; }
-        .msg.bot { background: #1e1b4b; align-self: flex-start; color: #e0e7ff; border-bottom-left-radius: 2px; border: 1px solid #3730a3; }
+
+        .msg { margin-bottom: 12px; padding: 12px 16px; border-radius: 8px; max-width: 85%; }
+        .msg.user { background: #1f2533; align-self: flex-end; color: white; border-bottom-right-radius: 2px; border: 1px solid #2d3748; }
+
+        /* Engineering Mode Bot Message */
+        .msg.bot {
+            background: #161b2d;
+            align-self: flex-start;
+            color: #ffffff;
+            border-bottom-left-radius: 2px;
+            border: 1px solid #5c4dff;
+            width: 90%;
+        }
+
+        /* Telemetry Styles */
+        .tech-label { color: #94a3b8; font-weight: 700; font-size: 10px; letter-spacing: 0.5px; text-transform: uppercase; }
+        .tech-value { color: #00ffcc; font-family: 'Courier New', monospace; font-weight: 900; font-size: 14px; }
+        .critical-value { color: #facc15; font-weight: 900; }
 
         .input-area { display: flex; gap: 10px; margin-top: 10px; }
         input#chat-input { flex: 1; padding: 14px; border-radius: 8px; border: 1px solid #232a3b; background: #12151e; color: white; outline: none; transition: 0.3s; }
         input#chat-input:focus { border-color: #5c4dff; box-shadow: 0 0 0 2px rgba(92, 77, 255, 0.2); }
 
-        /* Estilo del Combo Box */
         select#model-select {
-            background: #12151e;
-            color: #a5b4fc;
-            border: 1px solid #232a3b;
-            padding: 10px;
-            border-radius: 8px;
-            outline: none;
-            cursor: pointer;
-            font-weight: bold;
-            font-size: 12px;
+            background: #12151e; color: #a5b4fc; border: 1px solid #232a3b; padding: 10px; border-radius: 8px; outline: none; cursor: pointer; font-weight: bold; font-size: 12px;
         }
-        select#model-select:hover { border-color: #5c4dff; }
-
         button#send-btn { padding: 0 25px; background: #5c4dff; border: none; border-radius: 8px; color: white; cursor: pointer; font-weight: 800; transition: 0.2s; }
         button#send-btn:hover { background: #4a3df0; transform: translateY(-1px); }
     </style>
@@ -63,7 +67,6 @@
         <img src="logo-aurelian.svg" alt="Aurelian Logo" style="width: 40px; height: 40px;">
         <span class="brand-name">AURELIAN AI</span>
     </div>
-
     <div class="nav-item" onclick="loadModule('token-lab')"><span class="material-icons">calculate</span><span class="nav-text">Token Lab</span></div>
     <div class="nav-item" onclick="loadModule('architect')"><span class="material-icons">architecture</span><span class="nav-text">Architect Studio</span></div>
     <div class="nav-item" onclick="loadModule('vault')"><span class="material-icons">folder</span><span class="nav-text">Project Vault</span></div>
@@ -80,7 +83,6 @@
 </div>
 
 <script>
-    // URL de tu Backend (Ngrok)
     const BACKEND_URL = "https://ungraphitized-collette-rheumatoidally.ngrok-free.dev/api/tokens/analizar";
 
     function loadModule(module) {
@@ -98,24 +100,22 @@
 
         if (module === 'token-lab') {
             body.innerHTML = `
-                    <div class="chat-container">
-                        <div id="chat-window">Consola iniciada... Esperando prompt para análisis.</div>
-
-                        <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 5px;">
-                            <label style="font-size: 11px; color: #6a7387; font-weight: 800; letter-spacing: 1px;">LLM TARGET:</label>
-                            <select id="model-select">
-                                <option value="llama3.2:latest">Llama 3.2 (2.0 GB)</option>
-                                <option value="codestral:latest">Codestral (12 GB)</option>
-                                <option value="mistral-nemo:latest">Mistral Nemo (7.1 GB)</option>
-                                <option value="nomic-embed-text:latest">Nomic Embed (Vectors)</option>
-                            </select>
-                        </div>
-
-                        <div class="input-area">
-                            <input type="text" id="chat-input" placeholder="Escribe un prompt para medir tokens..." onkeypress="if(event.key==='Enter') sendChat()">
-                            <button id="send-btn" onclick="sendChat()">ENVIAR</button>
-                        </div>
-                    </div>`;
+                <div class="chat-container">
+                    <div id="chat-window">Consola iniciada... Esperando prompt para análisis.</div>
+                    <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 5px;">
+                        <label style="font-size: 11px; color: #6a7387; font-weight: 800; letter-spacing: 1px;">LLM TARGET:</label>
+                        <select id="model-select">
+                            <option value="llama3.2:latest">Llama 3.2 (2.0 GB)</option>
+                            <option value="codestral:latest">Codestral (12 GB)</option>
+                            <option value="mistral-nemo:latest">Mistral Nemo (7.1 GB)</option>
+                            <option value="nomic-embed-text:latest">Nomic Embed (Vectors)</option>
+                        </select>
+                    </div>
+                    <div class="input-area">
+                        <input type="text" id="chat-input" placeholder="Escribe un prompt para medir tokens..." onkeypress="if(event.key==='Enter') sendChat()">
+                        <button id="send-btn" onclick="sendChat()">ENVIAR</button>
+                    </div>
+                </div>`;
         } else {
             body.innerHTML = `<p style="color: #6a7387;">Módulo [${modules[module].t}] encriptado o en desarrollo.</p>`;
         }
@@ -123,54 +123,72 @@
 
     async function sendChat() {
         const input = document.getElementById('chat-input');
-        const win = document.getElementById('chat-window');
         const modelSelect = document.getElementById('model-select');
+        const win = document.getElementById('chat-window');
 
         const prompt = input.value.trim();
-        // Captura el valor del combo (si existe en el DOM)
         const model = modelSelect ? modelSelect.value : "llama3.2:latest";
 
         if(!prompt) return;
-
-        // Limpiar consola al inicio
         if(win.innerText.includes("Consola iniciada")) win.innerHTML = "";
 
-        // Añadir mensaje del usuario indicando el modelo elegido
         win.innerHTML += `<div class="msg user"><b>> [${model}]</b> ${prompt}</div>`;
         input.value = "";
         win.scrollTop = win.scrollHeight;
 
         try {
-            // TRANSMISIÓN COMPLETA AL BACKEND
             const response = await fetch(BACKEND_URL, {
                 method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'ngrok-skip-browser-warning': 'true'
-                },
-                body: JSON.stringify({
-                    prompt: prompt,
-                    model: model  // <--- TRANSMITIENDO EL LLM ELEGIDO
-                })
+                headers: { 'Content-Type': 'application/json', 'ngrok-skip-browser-warning': 'true' },
+                body: JSON.stringify({ prompt: prompt, model: model })
             });
 
             if (response.ok) {
                 const data = await response.json();
+                const t = data.telemetria || {};
+
                 win.innerHTML += `
-                        <div class="msg bot">
-                            <b>AURELIAN:</b> Análisis completado.<br>
-                            <span style="color: #5c4dff; font-size: 11px;">[MODELO: ${model}]</span><br>
-                            <span style="color: #00ffcc;">[TOKENS DETECTADOS: ${data.tokens || 'N/A'}]</span><br>
-                            ${data.output || 'Secuencia procesada sin texto de retorno.'}
-                        </div>`;
+                    <div class="msg bot">
+                        <b style="color: #818cf8; letter-spacing: 1px;">CORE::SYSTEM_PROFILER [${data.modelo || model}]</b>
+                        <hr style="border: 0; border-top: 1px solid #3730a3; margin: 10px 0;">
+
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+                            <div>
+                                <span class="tech-label">Inference Speed:</span><br>
+                                <span class="tech-value critical-value">${t.velocidad || '0 t/s'}</span>
+                            </div>
+                            <div>
+                                <span class="tech-label">Total Latency:</span><br>
+                                <span class="tech-value">${t.latencia_total || '0s'}</span>
+                            </div>
+                            <div>
+                                <span class="tech-label">Input Tokens:</span><br>
+                                <span class="tech-value">${t.tokens_entrada || 0}</span>
+                            </div>
+                            <div>
+                                <span class="tech-label">Output Tokens:</span><br>
+                                <span class="tech-value">${t.tokens_salida || 0}</span>
+                            </div>
+                            <div>
+                                <span class="tech-label">VRAM Load:</span><br>
+                                <span class="tech-value">${t.tiempo_carga_modelo || '0ms'}</span>
+                            </div>
+                            <div>
+                                <span class="tech-label">Status:</span><br>
+                                <span class="tech-value" style="color: #4ade80;">200_OK</span>
+                            </div>
+                        </div>
+
+                        <div style="margin-top: 12px; font-size: 9px; color: #64748b; border-top: 1px solid #1f2533; padding-top: 5px; font-family: monospace;">
+                            EXEC_HASH: ${Math.random().toString(36).substring(7).toUpperCase()} | BYPASS: FALSE | ENGINE: OLLAMA_DOCKER
+                        </div>
+                    </div>`;
             } else {
-                win.innerHTML += `<div class="msg bot" style="color: #ff4d4d;"><b>ERROR:</b> El núcleo no responde (Status: ${response.status})</div>`;
+                win.innerHTML += `<div class="msg bot" style="color: #ff4d4d;"><b>ERROR:</b> Nucleus connection failed (${response.status})</div>`;
             }
         } catch (error) {
-            console.error("Error de conexión:", error);
-            win.innerHTML += `<div class="msg bot" style="color: #ff4d4d;"><b>ERROR CRÍTICO:</b> Desconexión con el host de Ngrok.</div>`;
+            win.innerHTML += `<div class="msg bot" style="color: #ff4d4d;"><b>CRITICAL_ERROR:</b> Host unreachable. Check Ngrok tunnel.</div>`;
         }
-
         win.scrollTop = win.scrollHeight;
     }
 </script>
