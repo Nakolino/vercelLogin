@@ -48,7 +48,9 @@
             outline: none;
             cursor: pointer;
             font-weight: bold;
+            font-size: 12px;
         }
+        select#model-select:hover { border-color: #5c4dff; }
 
         button#send-btn { padding: 0 25px; background: #5c4dff; border: none; border-radius: 8px; color: white; cursor: pointer; font-weight: 800; transition: 0.2s; }
         button#send-btn:hover { background: #4a3df0; transform: translateY(-1px); }
@@ -78,6 +80,7 @@
 </div>
 
 <script>
+    // URL de tu Backend (Ngrok)
     const BACKEND_URL = "https://ungraphitized-collette-rheumatoidally.ngrok-free.dev/api/tokens/analizar";
 
     function loadModule(module) {
@@ -99,11 +102,11 @@
                         <div id="chat-window">Consola iniciada... Esperando prompt para análisis.</div>
 
                         <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 5px;">
-                            <label style="font-size: 11px; color: #6a7387; font-weight: 800;">LLM TARGET:</label>
+                            <label style="font-size: 11px; color: #6a7387; font-weight: 800; letter-spacing: 1px;">LLM TARGET:</label>
                             <select id="model-select">
-                                <option value="llama3.2:latest">Llama 3.2 (Latest)</option>
-                                <option value="codestral:latest">Codestral (Dev)</option>
-                                <option value="mistral-nemo:latest">Mistral Nemo (Nvidia)</option>
+                                <option value="llama3.2:latest">Llama 3.2 (2.0 GB)</option>
+                                <option value="codestral:latest">Codestral (12 GB)</option>
+                                <option value="mistral-nemo:latest">Mistral Nemo (7.1 GB)</option>
                                 <option value="nomic-embed-text:latest">Nomic Embed (Vectors)</option>
                             </select>
                         </div>
@@ -120,21 +123,25 @@
 
     async function sendChat() {
         const input = document.getElementById('chat-input');
-        const modelSelect = document.getElementById('model-select');
         const win = document.getElementById('chat-window');
+        const modelSelect = document.getElementById('model-select');
 
         const prompt = input.value.trim();
+        // Captura el valor del combo (si existe en el DOM)
         const model = modelSelect ? modelSelect.value : "llama3.2:latest";
 
         if(!prompt) return;
 
+        // Limpiar consola al inicio
         if(win.innerText.includes("Consola iniciada")) win.innerHTML = "";
 
-        win.innerHTML += `<div class="msg user"><b>></b> [${model}] ${prompt}</div>`;
+        // Añadir mensaje del usuario indicando el modelo elegido
+        win.innerHTML += `<div class="msg user"><b>> [${model}]</b> ${prompt}</div>`;
         input.value = "";
         win.scrollTop = win.scrollHeight;
 
         try {
+            // TRANSMISIÓN COMPLETA AL BACKEND
             const response = await fetch(BACKEND_URL, {
                 method: 'POST',
                 headers: {
@@ -143,7 +150,7 @@
                 },
                 body: JSON.stringify({
                     prompt: prompt,
-                    model: model // Se envía el modelo seleccionado
+                    model: model  // <--- TRANSMITIENDO EL LLM ELEGIDO
                 })
             });
 
@@ -152,7 +159,7 @@
                 win.innerHTML += `
                         <div class="msg bot">
                             <b>AURELIAN:</b> Análisis completado.<br>
-                            <span style="color: #00ffcc;">[LLM: ${data.modelo_detectado || model}]</span><br>
+                            <span style="color: #5c4dff; font-size: 11px;">[MODELO: ${model}]</span><br>
                             <span style="color: #00ffcc;">[TOKENS DETECTADOS: ${data.tokens || 'N/A'}]</span><br>
                             ${data.output || 'Secuencia procesada sin texto de retorno.'}
                         </div>`;
@@ -161,7 +168,7 @@
             }
         } catch (error) {
             console.error("Error de conexión:", error);
-            win.innerHTML += `<div class="msg bot" style="color: #ff4d4d;"><b>ERROR CRÍTICO:</b> No se pudo establecer conexión con el host.</div>`;
+            win.innerHTML += `<div class="msg bot" style="color: #ff4d4d;"><b>ERROR CRÍTICO:</b> Desconexión con el host de Ngrok.</div>`;
         }
 
         win.scrollTop = win.scrollHeight;
