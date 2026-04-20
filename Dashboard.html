@@ -9,55 +9,44 @@
     <style>
         body { margin: 0; display: flex; height: 100vh; background-color: #0b0d12; color: white; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; overflow: hidden; }
 
-        /* Sidebar Plegable */
+        /* Sidebar */
         .sidebar { width: 80px; background-color: #12151e; border-right: 1px solid #1f2533; padding: 20px 0; transition: width 0.3s ease; overflow: hidden; white-space: nowrap; flex-shrink: 0; z-index: 10; }
         .sidebar:hover { width: 260px; }
-
         .brand-container { display: flex; align-items: center; padding: 0 20px; margin-bottom: 30px; }
         .brand-name { font-family: 'Cinzel', serif; font-weight: 900; font-size: 18px; margin-left: 15px; opacity: 0; transition: opacity 0.3s; color: #ffffff; letter-spacing: 1px; }
         .sidebar:hover .brand-name { opacity: 1; }
-
         .nav-item { display: flex; align-items: center; padding: 15px 25px; cursor: pointer; color: #6a7387; font-weight: bold; transition: 0.2s; }
         .nav-item:hover { background-color: #1f2533; color: white; }
         .nav-item span.material-icons { min-width: 30px; font-size: 24px; }
         .nav-text { opacity: 0; transition: opacity 0.2s; margin-left: 20px; }
         .sidebar:hover .nav-text { opacity: 1; }
 
-        /* Contenido Principal */
+        /* Contenido */
         #content { flex: 1; padding: 40px; overflow-y: auto; background-image: radial-gradient(circle at top right, #161b2d 0%, #0b0d12 40%); }
         .card { background: rgba(18, 21, 30, 0.8); backdrop-filter: blur(10px); padding: 30px; border-radius: 16px; border: 1px solid #1f2533; max-width: 900px; margin: auto; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
 
-        /* Chat de Token Lab */
-        .chat-container { display: flex; flex-direction: column; gap: 15px; }
-        #chat-window { height: 400px; background: #0b0d12; border-radius: 12px; padding: 20px; overflow-y: auto; border: 1px solid #232a3b; font-family: 'Courier New', Courier, monospace; font-size: 14px; line-height: 1.5; color: #a5b4fc; }
+        /* Chat Window */
+        #chat-window { height: 420px; background: #0b0d12; border-radius: 12px; padding: 20px; overflow-y: auto; border: 1px solid #232a3b; font-family: 'Courier New', monospace; font-size: 13px; color: #a5b4fc; }
 
-        .msg { margin-bottom: 12px; padding: 12px 16px; border-radius: 8px; max-width: 85%; }
-        .msg.user { background: #1f2533; align-self: flex-end; color: white; border-bottom-right-radius: 2px; border: 1px solid #2d3748; }
+        .msg { margin-bottom: 12px; padding: 12px 16px; border-radius: 8px; max-width: 90%; }
+        .msg.user { background: #1f2533; align-self: flex-end; border: 1px solid #2d3748; color: white; }
 
-        /* Engineering Mode Bot Message */
-        .msg.bot {
-            background: #161b2d;
-            align-self: flex-start;
-            color: #ffffff;
-            border-bottom-left-radius: 2px;
-            border: 1px solid #5c4dff;
-            width: 90%;
-        }
+        /* Estilos de Telemetría (Contraste Máximo) */
+        .msg.bot { background: #161b2d; border: 1px solid #5c4dff; align-self: flex-start; }
+        .tech-label { color: #94a3b8; font-weight: 700; font-size: 10px; text-transform: uppercase; }
+        .tech-value { color: #00ffcc; font-weight: 900; }
+        .critical-value { color: #facc15; font-size: 15px; } /* Amarillo para el dato rey */
 
-        /* Telemetry Styles */
-        .tech-label { color: #94a3b8; font-weight: 700; font-size: 10px; letter-spacing: 0.5px; text-transform: uppercase; }
-        .tech-value { color: #00ffcc; font-family: 'Courier New', monospace; font-weight: 900; font-size: 14px; }
-        .critical-value { color: #facc15; font-weight: 900; }
+        /* Tabla de Comparativa */
+        .rank-table { width: 100%; border-collapse: collapse; margin-top: 10px; background: #0a0a0a; border: 1px solid #3730a3; }
+        .rank-table th { background: #1f2533; color: #818cf8; text-align: left; padding: 8px; font-size: 10px; }
+        .rank-table td { padding: 10px 8px; border-bottom: 1px solid #1f2533; font-size: 12px; }
+        .rank-first { color: #facc15; font-weight: 900; } /* Ganador en amarillo */
 
         .input-area { display: flex; gap: 10px; margin-top: 10px; }
-        input#chat-input { flex: 1; padding: 14px; border-radius: 8px; border: 1px solid #232a3b; background: #12151e; color: white; outline: none; transition: 0.3s; }
-        input#chat-input:focus { border-color: #5c4dff; box-shadow: 0 0 0 2px rgba(92, 77, 255, 0.2); }
-
-        select#model-select {
-            background: #12151e; color: #a5b4fc; border: 1px solid #232a3b; padding: 10px; border-radius: 8px; outline: none; cursor: pointer; font-weight: bold; font-size: 12px;
-        }
-        button#send-btn { padding: 0 25px; background: #5c4dff; border: none; border-radius: 8px; color: white; cursor: pointer; font-weight: 800; transition: 0.2s; }
-        button#send-btn:hover { background: #4a3df0; transform: translateY(-1px); }
+        input#chat-input { flex: 1; padding: 14px; border-radius: 8px; border: 1px solid #232a3b; background: #12151e; color: white; outline: none; }
+        select#model-select { background: #12151e; color: #a5b4fc; border: 1px solid #232a3b; padding: 10px; border-radius: 8px; font-weight: bold; }
+        button#send-btn { padding: 0 25px; background: #5c4dff; color: white; border: none; border-radius: 8px; cursor: pointer; font-weight: 800; }
     </style>
 </head>
 <body>
@@ -69,15 +58,13 @@
     </div>
     <div class="nav-item" onclick="loadModule('token-lab')"><span class="material-icons">calculate</span><span class="nav-text">Token Lab</span></div>
     <div class="nav-item" onclick="loadModule('architect')"><span class="material-icons">architecture</span><span class="nav-text">Architect Studio</span></div>
-    <div class="nav-item" onclick="loadModule('vault')"><span class="material-icons">folder</span><span class="nav-text">Project Vault</span></div>
-    <div class="nav-item" onclick="loadModule('flow')"><span class="material-icons">account_tree</span><span class="nav-text">Flow Vis</span></div>
 </div>
 
 <div id="content">
     <div class="card">
-        <h2 id="module-title" style="font-family: 'Cinzel', serif; letter-spacing: 2px; color: #5c4dff;">SYSTEM READY</h2>
+        <h2 id="module-title" style="font-family: 'Cinzel', serif; letter-spacing: 2px; color: #5c4dff;">AURELIAN CORE</h2>
         <div id="module-body">
-            <p style="color: #6a7387;">Seleccione un módulo del núcleo para iniciar la secuencia.</p>
+            <p style="color: #6a7387;">Inicie el protocolo de análisis en el Token Lab.</p>
         </div>
     </div>
 </div>
@@ -86,109 +73,113 @@
     const BACKEND_URL = "https://ungraphitized-collette-rheumatoidally.ngrok-free.dev/api/tokens/analizar";
 
     function loadModule(module) {
-        const body = document.getElementById('module-body');
-        const title = document.getElementById('module-title');
-
-        const modules = {
-            'token-lab': { t: 'TOKEN LAB', d: 'Analizador de consumo de red neuronal.' },
-            'architect': { t: 'ARCHITECT STUDIO', d: 'Diseño de blueprints de IA.' },
-            'vault': { t: 'PROJECT VAULT', d: 'Repositorio de memoria central.' },
-            'flow': { t: 'FLOW VIS', d: 'Visualización de flujos lógicos.' }
-        };
-
-        title.innerText = modules[module].t;
-
         if (module === 'token-lab') {
-            body.innerHTML = `
+            document.getElementById('module-title').innerText = "TOKEN LAB :: PERFORMANCE PROFILER";
+            document.getElementById('module-body').innerHTML = `
                 <div class="chat-container">
-                    <div id="chat-window">Consola iniciada... Esperando prompt para análisis.</div>
+                    <div id="chat-window">PROTOCOLO LISTO. Seleccione objetivo de análisis.</div>
                     <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 5px;">
-                        <label style="font-size: 11px; color: #6a7387; font-weight: 800; letter-spacing: 1px;">LLM TARGET:</label>
+                        <label style="font-size: 11px; color: #6a7387; font-weight: 800;">LLM TARGET:</label>
                         <select id="model-select">
+                            <option value="all">TEST_ALL (Comparativa de Velocidad)</option>
                             <option value="llama3.2:latest">Llama 3.2 (2.0 GB)</option>
                             <option value="codestral:latest">Codestral (12 GB)</option>
                             <option value="mistral-nemo:latest">Mistral Nemo (7.1 GB)</option>
-                            <option value="nomic-embed-text:latest">Nomic Embed (Vectors)</option>
                         </select>
                     </div>
                     <div class="input-area">
-                        <input type="text" id="chat-input" placeholder="Escribe un prompt para medir tokens..." onkeypress="if(event.key==='Enter') sendChat()">
-                        <button id="send-btn" onclick="sendChat()">ENVIAR</button>
+                        <input type="text" id="chat-input" placeholder="Escribe un prompt para el benchmark..." onkeypress="if(event.key==='Enter') startAnalysis()">
+                        <button id="send-btn" onclick="startAnalysis()">EJECUTAR TEST</button>
                     </div>
                 </div>`;
-        } else {
-            body.innerHTML = `<p style="color: #6a7387;">Módulo [${modules[module].t}] encriptado o en desarrollo.</p>`;
         }
     }
 
-    async function sendChat() {
+    async function startAnalysis() {
         const input = document.getElementById('chat-input');
         const modelSelect = document.getElementById('model-select');
         const win = document.getElementById('chat-window');
-
         const prompt = input.value.trim();
-        const model = modelSelect ? modelSelect.value : "llama3.2:latest";
+        const selectedOption = modelSelect.value;
 
         if(!prompt) return;
-        if(win.innerText.includes("Consola iniciada")) win.innerHTML = "";
-
-        win.innerHTML += `<div class="msg user"><b>> [${model}]</b> ${prompt}</div>`;
+        win.innerHTML = `<div class="msg user">> [INICIANDO BENCHMARK] ${prompt}</div>`;
         input.value = "";
-        win.scrollTop = win.scrollHeight;
 
-        try {
-            const response = await fetch(BACKEND_URL, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json', 'ngrok-skip-browser-warning': 'true' },
-                body: JSON.stringify({ prompt: prompt, model: model })
-            });
+        // Lista de modelos a probar si se elige "all"
+        const modelsToTest = selectedOption === 'all'
+            ? ['llama3.2:latest', 'mistral-nemo:latest', 'codestral:latest']
+            : [selectedOption];
 
-            if (response.ok) {
-                const data = await response.json();
-                const t = data.telemetria || {};
+        let results = [];
 
-                win.innerHTML += `
-                    <div class="msg bot">
-                        <b style="color: #818cf8; letter-spacing: 1px;">CORE::SYSTEM_PROFILER [${data.modelo || model}]</b>
-                        <hr style="border: 0; border-top: 1px solid #3730a3; margin: 10px 0;">
+        for (const model of modelsToTest) {
+            win.innerHTML += `<div style="color: #6a7387; font-size: 10px;">Procesando en ${model}... Por favor espere.</div>`;
+            win.scrollTop = win.scrollHeight;
 
-                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
-                            <div>
-                                <span class="tech-label">Inference Speed:</span><br>
-                                <span class="tech-value critical-value">${t.velocidad || '0 t/s'}</span>
-                            </div>
-                            <div>
-                                <span class="tech-label">Total Latency:</span><br>
-                                <span class="tech-value">${t.latencia_total || '0s'}</span>
-                            </div>
-                            <div>
-                                <span class="tech-label">Input Tokens:</span><br>
-                                <span class="tech-value">${t.tokens_entrada || 0}</span>
-                            </div>
-                            <div>
-                                <span class="tech-label">Output Tokens:</span><br>
-                                <span class="tech-value">${t.tokens_salida || 0}</span>
-                            </div>
-                            <div>
-                                <span class="tech-label">VRAM Load:</span><br>
-                                <span class="tech-value">${t.tiempo_carga_modelo || '0ms'}</span>
-                            </div>
-                            <div>
-                                <span class="tech-label">Status:</span><br>
-                                <span class="tech-value" style="color: #4ade80;">200_OK</span>
-                            </div>
-                        </div>
+            try {
+                const response = await fetch(BACKEND_URL, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json', 'ngrok-skip-browser-warning': 'true' },
+                    body: JSON.stringify({ prompt: prompt, model: model })
+                });
 
-                        <div style="margin-top: 12px; font-size: 9px; color: #64748b; border-top: 1px solid #1f2533; padding-top: 5px; font-family: monospace;">
-                            EXEC_HASH: ${Math.random().toString(36).substring(7).toUpperCase()} | BYPASS: FALSE | ENGINE: OLLAMA_DOCKER
-                        </div>
-                    </div>`;
-            } else {
-                win.innerHTML += `<div class="msg bot" style="color: #ff4d4d;"><b>ERROR:</b> Nucleus connection failed (${response.status})</div>`;
+                if (response.ok) {
+                    const data = await response.json();
+                    const t = data.telemetria || {};
+                    // Convertimos la velocidad de string "X tokens/sec" a número para ordenar
+                    const speedNum = parseFloat(t.velocidad) || 0;
+                    results.push({ model, speed: t.velocidad, speedNum, latency: t.latencia_total, tokens: data.tokens_totales });
+                }
+            } catch (error) {
+                console.error("Error en " + model);
             }
-        } catch (error) {
-            win.innerHTML += `<div class="msg bot" style="color: #ff4d4d;"><b>CRITICAL_ERROR:</b> Host unreachable. Check Ngrok tunnel.</div>`;
         }
+
+        renderComparison(results, win);
+    }
+
+    function renderComparison(results, win) {
+        // Ordenar de más rápido a más lento (por velocidad numérica)
+        results.sort((a, b) => b.speedNum - a.a.speedNum);
+
+        let tableHtml = `
+            <div class="msg bot">
+                <b style="color: #facc15;">BENCHMARK FINALIZADO :: RANKING DE VELOCIDAD</b>
+                <table class="rank-table">
+                    <thead>
+                        <tr>
+                            <th>POS</th>
+                            <th>MODELO LLM</th>
+                            <th>VELOCIDAD (TPS)</th>
+                            <th>LATENCIA</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+        `;
+
+        results.forEach((res, index) => {
+            const isFirst = index === 0;
+            tableHtml += `
+                <tr class="${isFirst ? 'rank-first' : ''}">
+                    <td>#${index + 1}</td>
+                    <td>${res.model}</td>
+                    <td>${res.speed}</td>
+                    <td>${res.latency}</td>
+                </tr>
+            `;
+        });
+
+        tableHtml += `
+                    </tbody>
+                </table>
+                <div style="margin-top: 10px; font-size: 9px; color: #64748b; border-top: 1px solid #1f2533; padding-top: 5px;">
+                    OPTIMIZACIÓN RECOMENDADA: Usar <b>${results[0].model}</b> para respuestas en tiempo real.
+                </div>
+            </div>
+        `;
+
+        win.innerHTML += tableHtml;
         win.scrollTop = win.scrollHeight;
     }
 </script>
