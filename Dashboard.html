@@ -7,62 +7,45 @@
     <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;900&display=swap" rel="stylesheet">
 
     <style>
-        body { margin: 0; display: flex; height: 100vh; background-color: #0b0d12; color: white; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
+        body { margin: 0; display: flex; height: 100vh; background-color: #0b0d12; color: white; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; overflow: hidden; }
 
-        /* Sidebar: Efecto Expansible */
+        /* Sidebar Plegable y Romano */
         .sidebar { width: 80px; background-color: #12151e; border-right: 1px solid #1f2533; padding: 20px 0; transition: width 0.3s ease; overflow: hidden; white-space: nowrap; flex-shrink: 0; z-index: 10; }
-        .sidebar:hover { width: 260px; } /* Expandimos un poco más para el nombre largo */
+        .sidebar:hover { width: 260px; }
 
-        /* Contenedor del Logo y Nombre */
-        .brand-container {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin-bottom: 30px;
-            padding: 0 15px;
-            transition: justify-content 0.3s;
-        }
-        .sidebar:hover .brand-container { justify-content: flex-start; }
-
-        /* Estilo del Nombre Romano */
-        .brand-name {
-            font-family: 'Cinzel', serif; /* FUENTE ROMANA */
-            font-weight: 900;
-            font-size: 18px;
-            color: #ffffff;
-            margin-left: 15px;
-            opacity: 0;
-            transition: opacity 0.3s ease;
-            letter-spacing: 1px; /* Espaciado romano clásico */
-        }
+        .brand-container { display: flex; align-items: center; padding: 0 20px; margin-bottom: 30px; }
+        .brand-name { font-family: 'Cinzel', serif; font-weight: 900; font-size: 18px; margin-left: 15px; opacity: 0; transition: opacity 0.3s; color: #ffffff; letter-spacing: 1px; }
         .sidebar:hover .brand-name { opacity: 1; }
 
-        /* Elementos de Navegación */
-        .nav-item { display: flex; align-items: center; padding: 15px 25px; cursor: pointer; color: #6a7387; font-weight: bold; transition: 0.2s; white-space: nowrap; }
+        .nav-item { display: flex; align-items: center; padding: 15px 25px; cursor: pointer; color: #6a7387; font-weight: bold; transition: 0.2s; }
         .nav-item:hover { background-color: #1f2533; color: white; }
-        .nav-item span.material-icons { margin-right: 20px; min-width: 30px; }
-
+        .nav-item span.material-icons { min-width: 30px; font-size: 24px; }
         .nav-text { opacity: 0; transition: opacity 0.2s; margin-left: 20px; }
         .sidebar:hover .nav-text { opacity: 1; }
 
         /* Contenido Principal */
-        #content { flex: 1; padding: 40px; overflow-y: auto; background-color: #0b0d12; }
-        .card { background: #12151e; padding: 25px; border-radius: 12px; border: 1px solid #1f2533; max-width: 900px; margin: auto; box-shadow: 0 4px 15px rgba(0,0,0,0.3); }
+        #content { flex: 1; padding: 40px; overflow-y: auto; background-image: radial-gradient(circle at top right, #161b2d 0%, #0b0d12 40%); }
+        .card { background: rgba(18, 21, 30, 0.8); backdrop-filter: blur(10px); padding: 30px; border-radius: 16px; border: 1px solid #1f2533; max-width: 900px; margin: auto; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
 
-        /* Chat */
+        /* Chat de Token Lab */
         .chat-container { display: flex; flex-direction: column; gap: 15px; }
-        #chat-window { height: 350px; background: #171b26; border-radius: 8px; padding: 15px; overflow-y: auto; border: 1px solid #232a3b; color: #d1d5db; }
-        .input-area { display: flex; gap: 10px; }
-        input { flex: 1; padding: 12px; border-radius: 5px; border: 1px solid #232a3b; background: #12151e; color: white; outline: none; }
-        button { padding: 10px 20px; background: #5c4dff; border: none; border-radius: 5px; color: white; cursor: pointer; font-weight: bold; transition: 0.2s; }
-        button:hover { background: #4a3df0; }
+        #chat-window { height: 400px; background: #0b0d12; border-radius: 12px; padding: 20px; overflow-y: auto; border: 1px solid #232a3b; font-family: 'Courier New', Courier, monospace; font-size: 14px; line-height: 1.5; color: #a5b4fc; }
+        .msg { margin-bottom: 12px; padding: 8px 12px; border-radius: 8px; max-width: 85%; }
+        .msg.user { background: #1f2533; align-self: flex-end; color: white; border-bottom-right-radius: 2px; }
+        .msg.bot { background: #1e1b4b; align-self: flex-start; color: #e0e7ff; border-bottom-left-radius: 2px; border: 1px solid #3730a3; }
+
+        .input-area { display: flex; gap: 10px; margin-top: 10px; }
+        input#chat-input { flex: 1; padding: 14px; border-radius: 8px; border: 1px solid #232a3b; background: #12151e; color: white; outline: none; transition: 0.3s; }
+        input#chat-input:focus { border-color: #5c4dff; box-shadow: 0 0 0 2px rgba(92, 77, 255, 0.2); }
+        button#send-btn { padding: 0 25px; background: #5c4dff; border: none; border-radius: 8px; color: white; cursor: pointer; font-weight: 800; transition: 0.2s; }
+        button#send-btn:hover { background: #4a3df0; transform: translateY(-1px); }
     </style>
 </head>
 <body>
 
 <div class="sidebar">
     <div class="brand-container">
-        <img src="logo-aurelian.svg" alt="Logo" style="width: 40px; height: 40px; border-radius: 8px;">
+        <img src="logo-aurelian.svg" alt="Aurelian Logo" style="width: 40px; height: 40px;">
         <span class="brand-name">AURELIAN AI</span>
     </div>
 
@@ -74,23 +57,26 @@
 
 <div id="content">
     <div class="card">
-        <h2 id="module-title">Bienvenido, Agente</h2>
+        <h2 id="module-title" style="font-family: 'Cinzel', serif; letter-spacing: 2px; color: #5c4dff;">SYSTEM READY</h2>
         <div id="module-body">
-            <p>Selecciona un módulo del menú lateral para comenzar a operar.</p>
+            <p style="color: #6a7387;">Seleccione un módulo del núcleo para iniciar la secuencia.</p>
         </div>
     </div>
 </div>
 
 <script>
+    // URL de tu Backend (Ngrok)
+    const BACKEND_URL = "https://ungraphitized-collette-rheumatoidally.ngrok-free.dev/api/tokens/analizar";
+
     function loadModule(module) {
         const body = document.getElementById('module-body');
         const title = document.getElementById('module-title');
 
         const modules = {
-            'token-lab': { t: 'Token Lab', d: 'Analizador de consumo y selección de LLMs.' },
-            'architect': { t: 'Architect Studio', d: 'Generador de features con IA.' },
-            'vault': { t: 'Project Vault', d: 'Gestión de proyectos y features.' },
-            'flow': { t: 'Flow Vis', d: 'Visualizador de diagramas.' }
+            'token-lab': { t: 'TOKEN LAB', d: 'Analizador de consumo de red neuronal.' },
+            'architect': { t: 'ARCHITECT STUDIO', d: 'Diseño de blueprints de IA.' },
+            'vault': { t: 'PROJECT VAULT', d: 'Repositorio de memoria central.' },
+            'flow': { t: 'FLOW VIS', d: 'Visualización de flujos lógicos.' }
         };
 
         title.innerText = modules[module].t;
@@ -98,32 +84,60 @@
         if (module === 'token-lab') {
             body.innerHTML = `
                     <div class="chat-container">
-                        <div id="chat-window">Esperando consulta...</div>
+                        <div id="chat-window">Consola iniciada... Esperando prompt para análisis.</div>
                         <div class="input-area">
-                            <input type="text" id="chat-input" placeholder="Ej: Analiza este prompt...">
-                            <button onclick="sendChat()">Enviar</button>
+                            <input type="text" id="chat-input" placeholder="Escribe un prompt para medir tokens..." onkeypress="if(event.key==='Enter') sendChat()">
+                            <button id="send-btn" onclick="sendChat()">ENVIAR</button>
                         </div>
                     </div>`;
         } else {
-            body.innerHTML = "<p>Módulo en desarrollo: " + modules[module].d + "</p>";
+            body.innerHTML = `<p style="color: #6a7387;">Módulo [${modules[module].t}] encriptado o en desarrollo.</p>`;
         }
     }
 
-    function sendChat() {
+    async function sendChat() {
         const input = document.getElementById('chat-input');
         const win = document.getElementById('chat-window');
-        if(!input.value) return;
+        const prompt = input.value.trim();
 
-        // Limpiar el mensaje de "Esperando consulta" si es el primer mensaje
-        if(win.innerText === "Esperando consulta...") {
-            win.innerHTML = "";
+        if(!prompt) return;
+
+        // Limpiar pantalla inicial
+        if(win.innerText.includes("Consola iniciada")) win.innerHTML = "";
+
+        // Añadir mensaje del usuario al chat
+        win.innerHTML += `<div class="msg user"><b>></b> ${prompt}</div>`;
+        input.value = "";
+        win.scrollTop = win.scrollHeight;
+
+        try {
+            // LLAMADA REAL AL BACKEND
+            const response = await fetch(BACKEND_URL, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'ngrok-skip-browser-warning': 'true' // Para saltar la pantalla de aviso de ngrok
+                },
+                body: JSON.stringify({ prompt: prompt })
+            });
+
+            if (response.ok) {
+                const data = await response.json();
+                // Suponiendo que n8n devuelve { tokens: 150, response: "texto" }
+                win.innerHTML += `
+                        <div class="msg bot">
+                            <b>AURELIAN:</b> Análisis completado.<br>
+                            <span style="color: #00ffcc;">[TOKENS DETECTADOS: ${data.tokens || 'N/A'}]</span><br>
+                            ${data.output || 'Secuencia procesada sin texto de retorno.'}
+                        </div>`;
+            } else {
+                win.innerHTML += `<div class="msg bot" style="color: #ff4d4d;"><b>ERROR:</b> El núcleo no responde (Status: ${response.status})</div>`;
+            }
+        } catch (error) {
+            console.error("Error de conexión:", error);
+            win.innerHTML += `<div class="msg bot" style="color: #ff4d4d;"><b>ERROR CRÍTICO:</b> No se pudo establecer conexión con el host de Ngrok.</div>`;
         }
 
-        win.innerHTML += `<div style="margin-bottom: 10px;"><b>Tú:</b> ${input.value}</div>`;
-
-        console.log("Enviando a backend:", input.value);
-
-        input.value = "";
         win.scrollTop = win.scrollHeight;
     }
 </script>
