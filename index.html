@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AURELIANAI - Login</title>
+    <style>
+        body {
+            background-color: #0b0d12;
+            color: #ffffff;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+        .login-container {
+            background-color: #12151e;
+            padding: 40px;
+            border-radius: 12px;
+            border: 1px solid #1f2533;
+            width: 100%;
+            max-width: 320px;
+            box-sizing: border-box;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+        }
+        .logo { text-align: center; font-size: 26px; font-weight: 900; margin-bottom: 30px; }
+        input {
+            width: 100%;
+            background-color: #171b26;
+            border: 1px solid #232a3b;
+            color: #ffffff;
+            padding: 14px 15px;
+            margin-bottom: 15px;
+            border-radius: 6px;
+            box-sizing: border-box;
+            outline: none;
+        }
+        .pass-wrapper { position: relative; width: 100%; margin-bottom: 15px; }
+        #password { padding-right: 45px; }
+        #togglePass {
+            position: absolute; right: 10px; top: 12px;
+            background: none; border: none; cursor: pointer; color: #6a7387;
+        }
+        .status-message { font-size: 12px; text-align: center; margin-bottom: 15px; display: none; font-weight: bold; }
+        button[type="submit"] {
+            width: 100%;
+            background-color: #5c4dff;
+            color: white;
+            border: none;
+            padding: 14px;
+            border-radius: 6px;
+            font-weight: 800;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+
+<div class="login-container">
+    <div class="logo">AURELIANAI</div>
+    <form id="loginForm">
+        <input type="text" id="username" placeholder="Usuario" required>
+
+        <div class="pass-wrapper">
+            <input type="password" id="password" placeholder="Contraseña" required>
+            <button type="button" id="togglePass">👁️</button>
+        </div>
+
+        <div id="statusText" class="status-message"></div>
+        <button type="submit">LOG IN</button>
+    </form>
+</div>
+
+<script>
+    // URL hacia tu controlador de Agentes
+    const API_BASE_URL = "https://ungraphitized-collette-rheumatoidally.ngrok-free.dev/api/agentes";
+
+    // Toggle Ver Contraseña
+    document.getElementById('togglePass').addEventListener('click', function() {
+        const passInput = document.getElementById('password');
+        const isPass = passInput.type === 'password';
+        passInput.type = isPass ? 'text' : 'password';
+        this.innerText = isPass ? '🙈' : '👁️';
+    });
+
+    // Envío del Login
+    document.getElementById('loginForm').addEventListener('submit', function(e) {
+        e.preventDefault();
+        const statusText = document.getElementById('statusText');
+        statusText.style.display = "block";
+        statusText.style.color = "#6a7387";
+        statusText.innerText = "Autenticando...";
+
+        fetch(`${API_BASE_URL}/login`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'ngrok-skip-browser-warning': 'true'
+            },
+            body: JSON.stringify({
+                nombre: document.getElementById('username').value,
+                password: document.getElementById('password').value
+            })
+        })
+            .then(response => {
+                if (response.ok) {
+                    statusText.style.color = "#4CAF50";
+                    statusText.innerText = "¡Acceso concedido!";
+                } else {
+                    statusText.style.color = "#e53935";
+                    statusText.innerText = "Credenciales incorrectas.";
+                }
+            })
+            .catch(error => {
+                statusText.style.color = "#e53935";
+                statusText.innerText = "Error de conexión.";
+            });
+    });
+</script>
+</body>
+</html>
