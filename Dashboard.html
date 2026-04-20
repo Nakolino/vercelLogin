@@ -4,39 +4,72 @@
     <meta charset="UTF-8">
     <title>AURELIANAI - Dashboard</title>
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;900&display=swap" rel="stylesheet">
+
     <style>
-        body { margin: 0; display: flex; height: 100vh; background-color: #0b0d12; color: white; font-family: sans-serif; }
+        body { margin: 0; display: flex; height: 100vh; background-color: #0b0d12; color: white; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
 
-        /* Sidebar: Plegable */
-        .sidebar { width: 80px; background-color: #12151e; border-right: 1px solid #1f2533; padding: 20px 0; transition: width 0.3s; overflow: hidden; white-space: nowrap; flex-shrink: 0; }
-        .sidebar:hover { width: 220px; }
+        /* Sidebar: Efecto Expansible */
+        .sidebar { width: 80px; background-color: #12151e; border-right: 1px solid #1f2533; padding: 20px 0; transition: width 0.3s ease; overflow: hidden; white-space: nowrap; flex-shrink: 0; z-index: 10; }
+        .sidebar:hover { width: 260px; } /* Expandimos un poco más para el nombre largo */
 
-        .nav-item { display: flex; align-items: center; padding: 15px 25px; cursor: pointer; color: #6a7387; font-weight: bold; transition: 0.2s; }
+        /* Contenedor del Logo y Nombre */
+        .brand-container {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 30px;
+            padding: 0 15px;
+            transition: justify-content 0.3s;
+        }
+        .sidebar:hover .brand-container { justify-content: flex-start; }
+
+        /* Estilo del Nombre Romano */
+        .brand-name {
+            font-family: 'Cinzel', serif; /* FUENTE ROMANA */
+            font-weight: 900;
+            font-size: 18px;
+            color: #ffffff;
+            margin-left: 15px;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            letter-spacing: 1px; /* Espaciado romano clásico */
+        }
+        .sidebar:hover .brand-name { opacity: 1; }
+
+        /* Elementos de Navegación */
+        .nav-item { display: flex; align-items: center; padding: 15px 25px; cursor: pointer; color: #6a7387; font-weight: bold; transition: 0.2s; white-space: nowrap; }
         .nav-item:hover { background-color: #1f2533; color: white; }
         .nav-item span.material-icons { margin-right: 20px; min-width: 30px; }
 
-        /* Contenedor Principal */
-        #content { flex: 1; padding: 40px; overflow-y: auto; }
-        .card { background: #12151e; padding: 25px; border-radius: 12px; border: 1px solid #1f2533; max-width: 800px; margin: auto; }
+        .nav-text { opacity: 0; transition: opacity 0.2s; margin-left: 20px; }
+        .sidebar:hover .nav-text { opacity: 1; }
 
-        /* Estilos Chat */
+        /* Contenido Principal */
+        #content { flex: 1; padding: 40px; overflow-y: auto; background-color: #0b0d12; }
+        .card { background: #12151e; padding: 25px; border-radius: 12px; border: 1px solid #1f2533; max-width: 900px; margin: auto; box-shadow: 0 4px 15px rgba(0,0,0,0.3); }
+
+        /* Chat */
         .chat-container { display: flex; flex-direction: column; gap: 15px; }
-        #chat-window { height: 350px; background: #171b26; border-radius: 8px; padding: 15px; overflow-y: auto; border: 1px solid #232a3b; }
+        #chat-window { height: 350px; background: #171b26; border-radius: 8px; padding: 15px; overflow-y: auto; border: 1px solid #232a3b; color: #d1d5db; }
         .input-area { display: flex; gap: 10px; }
-        input { flex: 1; padding: 12px; border-radius: 5px; border: 1px solid #232a3b; background: #12151e; color: white; }
-        button { padding: 10px 20px; background: #5c4dff; border: none; border-radius: 5px; color: white; cursor: pointer; font-weight: bold; }
+        input { flex: 1; padding: 12px; border-radius: 5px; border: 1px solid #232a3b; background: #12151e; color: white; outline: none; }
+        button { padding: 10px 20px; background: #5c4dff; border: none; border-radius: 5px; color: white; cursor: pointer; font-weight: bold; transition: 0.2s; }
+        button:hover { background: #4a3df0; }
     </style>
 </head>
 <body>
 
 <div class="sidebar">
-    <div style="text-align: center; margin-bottom: 30px; padding: 10px;">
-        <img src="logo-aurelian.svg" alt="Logo" style="width: 40px; height: 40px;">
+    <div class="brand-container">
+        <img src="logo-aurelian.svg" alt="Logo" style="width: 40px; height: 40px; border-radius: 8px;">
+        <span class="brand-name">AURELIAN AI</span>
     </div>
-    <div class="nav-item" onclick="loadModule('token-lab')"><span class="material-icons">calculate</span> Token Lab</div>
-    <div class="nav-item" onclick="loadModule('architect')"><span class="material-icons">architecture</span> Architect</div>
-    <div class="nav-item" onclick="loadModule('vault')"><span class="material-icons">folder</span> Vault</div>
-    <div class="nav-item" onclick="loadModule('flow')"><span class="material-icons">account_tree</span> Flow</div>
+
+    <div class="nav-item" onclick="loadModule('token-lab')"><span class="material-icons">calculate</span><span class="nav-text">Token Lab</span></div>
+    <div class="nav-item" onclick="loadModule('architect')"><span class="material-icons">architecture</span><span class="nav-text">Architect Studio</span></div>
+    <div class="nav-item" onclick="loadModule('vault')"><span class="material-icons">folder</span><span class="nav-text">Project Vault</span></div>
+    <div class="nav-item" onclick="loadModule('flow')"><span class="material-icons">account_tree</span><span class="nav-text">Flow Vis</span></div>
 </div>
 
 <div id="content">
@@ -81,10 +114,14 @@
         const win = document.getElementById('chat-window');
         if(!input.value) return;
 
-        win.innerHTML += `<div><b>Tú:</b> ${input.value}</div>`;
+        // Limpiar el mensaje de "Esperando consulta" si es el primer mensaje
+        if(win.innerText === "Esperando consulta...") {
+            win.innerHTML = "";
+        }
 
-        // Aquí es donde haremos el POST a tu API Java en el futuro
-        console.log("Enviando a n8n/Java:", input.value);
+        win.innerHTML += `<div style="margin-bottom: 10px;"><b>Tú:</b> ${input.value}</div>`;
+
+        console.log("Enviando a backend:", input.value);
 
         input.value = "";
         win.scrollTop = win.scrollHeight;
