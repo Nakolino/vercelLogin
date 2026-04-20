@@ -27,26 +27,26 @@
 
         /* Chat Window */
         #chat-window { height: 420px; background: #0b0d12; border-radius: 12px; padding: 20px; overflow-y: auto; border: 1px solid #232a3b; font-family: 'Courier New', monospace; font-size: 13px; color: #a5b4fc; }
-
         .msg { margin-bottom: 12px; padding: 12px 16px; border-radius: 8px; max-width: 90%; }
         .msg.user { background: #1f2533; align-self: flex-end; border: 1px solid #2d3748; color: white; }
+        .msg.bot { background: #161b2d; border: 1px solid #5c4dff; align-self: flex-start; width: 95%; }
 
         /* Estilos de Telemetría (Contraste Máximo) */
-        .msg.bot { background: #161b2d; border: 1px solid #5c4dff; align-self: flex-start; }
         .tech-label { color: #94a3b8; font-weight: 700; font-size: 10px; text-transform: uppercase; }
         .tech-value { color: #00ffcc; font-weight: 900; }
-        .critical-value { color: #facc15; font-size: 15px; } /* Amarillo para el dato rey */
+        .critical-value { color: #facc15; }
 
         /* Tabla de Comparativa */
-        .rank-table { width: 100%; border-collapse: collapse; margin-top: 10px; background: #0a0a0a; border: 1px solid #3730a3; }
-        .rank-table th { background: #1f2533; color: #818cf8; text-align: left; padding: 8px; font-size: 10px; }
-        .rank-table td { padding: 10px 8px; border-bottom: 1px solid #1f2533; font-size: 12px; }
-        .rank-first { color: #facc15; font-weight: 900; } /* Ganador en amarillo */
+        .rank-table { width: 100%; border-collapse: collapse; margin-top: 15px; background: #0a0a0a; border: 1px solid #3730a3; }
+        .rank-table th { background: #1f2533; color: #818cf8; text-align: left; padding: 10px; font-size: 10px; border-bottom: 2px solid #3730a3; }
+        .rank-table td { padding: 12px 10px; border-bottom: 1px solid #1f2533; font-size: 12px; }
+        .rank-first { color: #facc15; font-weight: 900; background: rgba(250, 204, 21, 0.05); }
 
         .input-area { display: flex; gap: 10px; margin-top: 10px; }
         input#chat-input { flex: 1; padding: 14px; border-radius: 8px; border: 1px solid #232a3b; background: #12151e; color: white; outline: none; }
-        select#model-select { background: #12151e; color: #a5b4fc; border: 1px solid #232a3b; padding: 10px; border-radius: 8px; font-weight: bold; }
-        button#send-btn { padding: 0 25px; background: #5c4dff; color: white; border: none; border-radius: 8px; cursor: pointer; font-weight: 800; }
+        select#model-select { background: #12151e; color: #a5b4fc; border: 1px solid #232a3b; padding: 10px; border-radius: 8px; font-weight: bold; cursor: pointer; }
+        button#send-btn { padding: 0 25px; background: #5c4dff; color: white; border: none; border-radius: 8px; cursor: pointer; font-weight: 800; transition: 0.3s; }
+        button#send-btn:hover { background: #4a3df0; transform: translateY(-1px); }
     </style>
 </head>
 <body>
@@ -103,10 +103,11 @@
         const selectedOption = modelSelect.value;
 
         if(!prompt) return;
-        win.innerHTML = `<div class="msg user">> [INICIANDO BENCHMARK] ${prompt}</div>`;
+
+        // Reset de consola y aviso de inicio
+        win.innerHTML = `<div class="msg user">> [STRESS_TEST_INIT] ${prompt}</div>`;
         input.value = "";
 
-        // Lista de modelos a probar si se elige "all"
         const modelsToTest = selectedOption === 'all'
             ? ['llama3.2:latest', 'mistral-nemo:latest', 'codestral:latest']
             : [selectedOption];
@@ -114,7 +115,9 @@
         let results = [];
 
         for (const model of modelsToTest) {
-            win.innerHTML += `<div style="color: #6a7387; font-size: 10px;">Procesando en ${model}... Por favor espere.</div>`;
+            // Creamos un ID único para actualizar el estado de este modelo
+            const statusId = `status-${model.replace(/[:.]/g, '-')}`;
+            win.innerHTML += `<div id="${statusId}" style="color: #6a7387; font-size: 11px; margin-bottom: 5px;">> Procesando en ${model}... Aguarde.</div>`;
             win.scrollTop = win.scrollHeight;
 
             try {
@@ -127,32 +130,53 @@
                 if (response.ok) {
                     const data = await response.json();
                     const t = data.telemetria || {};
-                    // Convertimos la velocidad de string "X tokens/sec" a número para ordenar
-                    const speedNum = parseFloat(t.velocidad) || 0;
-                    results.push({ model, speed: t.velocidad, speedNum, latency: t.latencia_total, tokens: data.tokens_totales });
+
+                    // Parseo robusto de la velocidad (ej: "15.4 tokens/sec" -> 15.4)
+                    const speedNum = t.velocidad ? parseFloat(t.velocidad.split(' ')[0]) : 0;
+
+                    results.push({
+                        model,
+                        speed: t.velocidad || '0 t/s',
+                        speedNum,
+                        latency: t.latencia_total || '0s',
+                        tokens: data.tokens_totales || 0
+                    });
+
+                    // Actualizamos el mensaje individual de éxito
+                    document.getElementById(statusId).innerHTML = `<span style="color: #4ade80;">> [OK] ${model} finalizado.</span>`;
+                } else {
+                    document.getElementById(statusId).innerHTML = `<span style="color: #f87171;">> [FAIL] ${model} rechazado (${response.status}).</span>`;
                 }
             } catch (error) {
-                console.error("Error en " + model);
+                console.error("Error en " + model, error);
+                document.getElementById(statusId).innerHTML = `<span style="color: #f87171;">> [ERROR] ${model} inaccesible.</span>`;
             }
+            win.scrollTop = win.scrollHeight;
         }
 
-        renderComparison(results, win);
+        if(results.length > 0) {
+            renderComparison(results, win);
+        } else {
+            win.innerHTML += `<div class="msg bot" style="color: #ff4d4d;">ERROR CRÍTICO: No se pudieron recolectar métricas del núcleo.</div>`;
+        }
     }
 
     function renderComparison(results, win) {
-        // Ordenar de más rápido a más lento (por velocidad numérica)
-        results.sort((a, b) => b.speedNum - a.a.speedNum);
+        // CORRECCIÓN: Ordenamiento descendente por velocidad (b - a)
+        results.sort((a, b) => b.speedNum - a.speedNum);
 
         let tableHtml = `
             <div class="msg bot">
-                <b style="color: #facc15;">BENCHMARK FINALIZADO :: RANKING DE VELOCIDAD</b>
+                <b style="color: #facc15; letter-spacing: 1.5px;">CORE::BENCHMARK_COMPLETE</b>
+                <p style="font-size: 11px; color: #94a3b8; margin: 5px 0 15px 0;">Ranking de eficiencia basado en la infraestructura actual.</p>
+
                 <table class="rank-table">
                     <thead>
                         <tr>
-                            <th>POS</th>
-                            <th>MODELO LLM</th>
-                            <th>VELOCIDAD (TPS)</th>
-                            <th>LATENCIA</th>
+                            <th>RANK</th>
+                            <th>ENGINE</th>
+                            <th>SPEED (TPS)</th>
+                            <th>LATENCY</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -160,11 +184,12 @@
 
         results.forEach((res, index) => {
             const isFirst = index === 0;
+            const rowStyle = isFirst ? 'class="rank-first"' : '';
             tableHtml += `
-                <tr class="${isFirst ? 'rank-first' : ''}">
+                <tr ${rowStyle}>
                     <td>#${index + 1}</td>
                     <td>${res.model}</td>
-                    <td>${res.speed}</td>
+                    <td class="critical-value">${res.speed}</td>
                     <td>${res.latency}</td>
                 </tr>
             `;
@@ -173,8 +198,8 @@
         tableHtml += `
                     </tbody>
                 </table>
-                <div style="margin-top: 10px; font-size: 9px; color: #64748b; border-top: 1px solid #1f2533; padding-top: 5px;">
-                    OPTIMIZACIÓN RECOMENDADA: Usar <b>${results[0].model}</b> para respuestas en tiempo real.
+                <div style="margin-top: 15px; font-size: 10px; color: #a5b4fc; border-top: 1px solid #3730a3; padding-top: 10px; font-family: -apple-system;">
+                    <b>ANÁLISIS PROACTIVO:</b> Se sugiere priorizar <b>${results[0].model}</b> para el módulo Architect Studio debido a su menor tiempo de respuesta.
                 </div>
             </div>
         `;
