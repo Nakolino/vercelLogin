@@ -2,143 +2,247 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <title>AURELIANAI - Dashboard</title>
-    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;900&display=swap" rel="stylesheet">
-
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AURELIAN AI - Multi-Agent System</title>
     <style>
-        body { margin: 0; display: flex; height: 100vh; background-color: #0b0d12; color: white; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; overflow: hidden; }
+        :root {
+            --bg-color: #0d0d0d;
+            --panel-bg: #161616;
+            --accent-color: #00f2ff;
+            --text-color: #e0e0e0;
+            --border-color: #333;
+        }
 
-        /* Sidebar Plegable y Romano */
-        .sidebar { width: 80px; background-color: #12151e; border-right: 1px solid #1f2533; padding: 20px 0; transition: width 0.3s ease; overflow: hidden; white-space: nowrap; flex-shrink: 0; z-index: 10; }
-        .sidebar:hover { width: 260px; }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            margin: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            overflow: hidden;
+        }
 
-        .brand-container { display: flex; align-items: center; padding: 0 20px; margin-bottom: 30px; }
-        .brand-name { font-family: 'Cinzel', serif; font-weight: 900; font-size: 18px; margin-left: 15px; opacity: 0; transition: opacity 0.3s; color: #ffffff; letter-spacing: 1px; }
-        .sidebar:hover .brand-name { opacity: 1; }
+        /* --- VISTA DE LOGIN --- */
+        #login-view {
+            background: var(--panel-bg);
+            padding: 40px;
+            border-radius: 10px;
+            border: 1px solid var(--accent-color);
+            box-shadow: 0 0 20px rgba(0, 242, 255, 0.2);
+            text-align: center;
+            width: 350px;
+        }
 
-        .nav-item { display: flex; align-items: center; padding: 15px 25px; cursor: pointer; color: #6a7387; font-weight: bold; transition: 0.2s; }
-        .nav-item:hover { background-color: #1f2533; color: white; }
-        .nav-item span.material-icons { min-width: 30px; font-size: 24px; }
-        .nav-text { opacity: 0; transition: opacity 0.2s; margin-left: 20px; }
-        .sidebar:hover .nav-text { opacity: 1; }
+        input, select {
+            width: 100%;
+            padding: 12px;
+            margin: 10px 0;
+            background: #222;
+            border: 1px solid var(--border-color);
+            color: white;
+            border-radius: 5px;
+            box-sizing: border-box;
+        }
 
-        /* Contenido Principal */
-        #content { flex: 1; padding: 40px; overflow-y: auto; background-image: radial-gradient(circle at top right, #161b2d 0%, #0b0d12 40%); }
-        .card { background: rgba(18, 21, 30, 0.8); backdrop-filter: blur(10px); padding: 30px; border-radius: 16px; border: 1px solid #1f2533; max-width: 900px; margin: auto; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
+        button {
+            width: 100%;
+            padding: 12px;
+            background: var(--accent-color);
+            color: black;
+            border: none;
+            font-weight: bold;
+            cursor: pointer;
+            border-radius: 5px;
+            transition: 0.3s;
+        }
 
-        /* Chat de Token Lab */
-        .chat-container { display: flex; flex-direction: column; gap: 15px; }
-        #chat-window { height: 400px; background: #0b0d12; border-radius: 12px; padding: 20px; overflow-y: auto; border: 1px solid #232a3b; font-family: 'Courier New', Courier, monospace; font-size: 14px; line-height: 1.5; color: #a5b4fc; }
-        .msg { margin-bottom: 12px; padding: 8px 12px; border-radius: 8px; max-width: 85%; }
-        .msg.user { background: #1f2533; align-self: flex-end; color: white; border-bottom-right-radius: 2px; }
-        .msg.bot { background: #1e1b4b; align-self: flex-start; color: #e0e7ff; border-bottom-left-radius: 2px; border: 1px solid #3730a3; }
+        button:hover {
+            filter: brightness(1.2);
+            box-shadow: 0 0 15px var(--accent-color);
+        }
 
-        .input-area { display: flex; gap: 10px; margin-top: 10px; }
-        input#chat-input { flex: 1; padding: 14px; border-radius: 8px; border: 1px solid #232a3b; background: #12151e; color: white; outline: none; transition: 0.3s; }
-        input#chat-input:focus { border-color: #5c4dff; box-shadow: 0 0 0 2px rgba(92, 77, 255, 0.2); }
-        button#send-btn { padding: 0 25px; background: #5c4dff; border: none; border-radius: 8px; color: white; cursor: pointer; font-weight: 800; transition: 0.2s; }
-        button#send-btn:hover { background: #4a3df0; transform: translateY(-1px); }
+        /* --- DASHBOARD PRINCIPAL --- */
+        #dashboard-view {
+            display: none; /* Se activa al loguear */
+            width: 95vw;
+            height: 90vh;
+            grid-template-columns: 300px 1fr 350px;
+            gap: 20px;
+        }
+
+        .panel {
+            background: var(--panel-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 10px;
+            display: flex;
+            flex-direction: column;
+            padding: 20px;
+        }
+
+        header {
+            grid-column: 1 / span 3;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 20px;
+            border-bottom: 1px solid var(--accent-color);
+        }
+
+        /* --- CHAT Y LAB --- */
+        #chat-output, #lab-output {
+            flex-grow: 1;
+            overflow-y: auto;
+            background: #0a0a0a;
+            padding: 15px;
+            border-radius: 5px;
+            margin-bottom: 15px;
+            font-family: monospace;
+            border: 1px solid #222;
+        }
+
+        .system-msg { color: var(--accent-color); margin-bottom: 10px; }
+        .user-msg { color: #fff; margin-bottom: 10px; }
+
+        .hidden { display: none !important; }
+
     </style>
 </head>
 <body>
 
-<div class="sidebar">
-    <div class="brand-container">
-        <img src="logo-aurelian.svg" alt="Aurelian Logo" style="width: 40px; height: 40px;">
-        <span class="brand-name">AURELIAN AI</span>
-    </div>
-
-    <div class="nav-item" onclick="loadModule('token-lab')"><span class="material-icons">calculate</span><span class="nav-text">Token Lab</span></div>
-    <div class="nav-item" onclick="loadModule('architect')"><span class="material-icons">architecture</span><span class="nav-text">Architect Studio</span></div>
-    <div class="nav-item" onclick="loadModule('vault')"><span class="material-icons">folder</span><span class="nav-text">Project Vault</span></div>
-    <div class="nav-item" onclick="loadModule('flow')"><span class="material-icons">account_tree</span><span class="nav-text">Flow Vis</span></div>
+<div id="login-view">
+    <h1 style="color: var(--accent-color);">AURELIAN</h1>
+    <p>System Authentication</p>
+    <input type="text" id="username" placeholder="Nombre del Agente">
+    <input type="password" id="password" placeholder="Passcode">
+    <button onclick="intentarLogin()">INICIAR PROTOCOLO</button>
 </div>
 
-<div id="content">
-    <div class="card">
-        <h2 id="module-title" style="font-family: 'Cinzel', serif; letter-spacing: 2px; color: #5c4dff;">SYSTEM READY</h2>
-        <div id="module-body">
-            <p style="color: #6a7387;">Seleccione un módulo del núcleo para iniciar la secuencia.</p>
+<div id="dashboard-view">
+    <header>
+        <h2 style="margin:0;">AURELIAN <span style="color: var(--accent-color); font-size: 0.6em;">v1.0</span></h2>
+        <div id="user-info">Agente: <span id="display-name" style="color: var(--accent-color);">---</span></div>
+    </header>
+
+    <div class="panel">
+        <h3>Flota de Agentes</h3>
+        <ul style="list-style: none; padding: 0;">
+            <li style="color: var(--accent-color);">● Scrum Master (Active)</li>
+            <li>○ Programador (Idle)</li>
+            <li>○ QA Engine (Idle)</li>
+        </ul>
+    </div>
+
+    <div class="panel">
+        <h3>Centro de Mando</h3>
+        <div id="chat-output"></div>
+        <div style="display: flex; gap: 10px;">
+            <input type="text" id="chat-input" placeholder="Enviar comando al orquestador...">
+            <button style="width: 100px;" onclick="enviarChat()">ENVIAR</button>
         </div>
+    </div>
+
+    <div class="panel">
+        <h3 style="color: var(--accent-color);">Aurelian Lab</h3>
+
+        <label style="font-size: 0.8em;">LLM Target:</label>
+        <select id="llm-model">
+            <option value="llama3.2:latest">Llama 3.2 (2.0 GB)</option>
+            <option value="mistral-nemo:latest">Mistral Nemo (7.1 GB)</option>
+            <option value="codestral:latest">Codestral (12 GB)</option>
+            <option value="nomic-embed-text:latest">Nomic Embed</option>
+        </select>
+
+        <div id="lab-output">
+            <pre id="token-result">Esperando análisis...</pre>
+        </div>
+
+        <textarea id="lab-input" style="width:100%; height:100px; background:#222; color:white; border:none; padding:10px; border-radius:5px;" placeholder="Pega aquí el prompt para contar tokens..."></textarea>
+        <button style="margin-top:10px;" onclick="analizarTokens()">ANALIZAR LLM</button>
     </div>
 </div>
 
 <script>
-    // URL de tu Backend (Ngrok)
-    const BACKEND_URL = "https://ungraphitized-collette-rheumatoidally.ngrok-free.dev/api/tokens/analizar";
+    // CONFIGURACIÓN: Reemplaza con tu URL de Ngrok
+    const API_BASE = "https://tu-url-ngrok.ngrok-free.dev/api";
 
-    function loadModule(module) {
-        const body = document.getElementById('module-body');
-        const title = document.getElementById('module-title');
+    // --- LÓGICA DE NAVEGACIÓN ---
+    function intentarLogin() {
+        const user = document.getElementById('username').value;
+        const pass = document.getElementById('password').value;
 
-        const modules = {
-            'token-lab': { t: 'TOKEN LAB', d: 'Analizador de consumo de red neuronal.' },
-            'architect': { t: 'ARCHITECT STUDIO', d: 'Diseño de blueprints de IA.' },
-            'vault': { t: 'PROJECT VAULT', d: 'Repositorio de memoria central.' },
-            'flow': { t: 'FLOW VIS', d: 'Visualización de flujos lógicos.' }
-        };
+        if(!user) return alert("Ingresa un nombre");
 
-        title.innerText = modules[module].t;
-
-        if (module === 'token-lab') {
-            body.innerHTML = `
-                    <div class="chat-container">
-                        <div id="chat-window">Consola iniciada... Esperando prompt para análisis.</div>
-                        <div class="input-area">
-                            <input type="text" id="chat-input" placeholder="Escribe un prompt para medir tokens..." onkeypress="if(event.key==='Enter') sendChat()">
-                            <button id="send-btn" onclick="sendChat()">ENVIAR</button>
-                        </div>
-                    </div>`;
-        } else {
-            body.innerHTML = `<p style="color: #6a7387;">Módulo [${modules[module].t}] encriptado o en desarrollo.</p>`;
-        }
+        fetch(`${API_BASE}/agentes/login`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ nombre: user, password: pass })
+        })
+            .then(res => res.json())
+            .then(data => {
+                document.getElementById('login-view').classList.add('hidden');
+                document.getElementById('dashboard-view').style.display = 'grid';
+                document.getElementById('display-name').innerText = data.nombre;
+            })
+            .catch(err => alert("Error de conexión. ¿Ngrok está activo?"));
     }
 
-    async function sendChat() {
+    // --- LÓGICA DEL CHAT ---
+    async function enviarChat() {
         const input = document.getElementById('chat-input');
-        const win = document.getElementById('chat-window');
-        const prompt = input.value.trim();
+        const output = document.getElementById('chat-output');
+        const text = input.value;
+        const nombre = document.getElementById('display-name').innerText;
 
-        if(!prompt) return;
+        if(!text) return;
 
-        // Limpiar pantalla inicial
-        if(win.innerText.includes("Consola iniciada")) win.innerHTML = "";
-
-        // Añadir mensaje del usuario al chat
-        win.innerHTML += `<div class="msg user"><b>></b> ${prompt}</div>`;
+        output.innerHTML += `<div class="user-msg">> ${text}</div>`;
         input.value = "";
-        win.scrollTop = win.scrollHeight;
 
         try {
-            // LLAMADA REAL AL BACKEND
-            const response = await fetch(BACKEND_URL, {
+            const res = await fetch(`${API_BASE}/agentes/chat`, {
                 method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'ngrok-skip-browser-warning': 'true' // Para saltar la pantalla de aviso de ngrok
-                },
-                body: JSON.stringify({ prompt: prompt })
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ prompt: text, nombre: nombre, rol: "ADMIN" })
             });
-
-            if (response.ok) {
-                const data = await response.json();
-                // Suponiendo que n8n devuelve { tokens: 150, response: "texto" }
-                win.innerHTML += `
-                        <div class="msg bot">
-                            <b>AURELIAN:</b> Análisis completado.<br>
-                            <span style="color: #00ffcc;">[TOKENS DETECTADOS: ${data.tokens || 'N/A'}]</span><br>
-                            ${data.output || 'Secuencia procesada sin texto de retorno.'}
-                        </div>`;
-            } else {
-                win.innerHTML += `<div class="msg bot" style="color: #ff4d4d;"><b>ERROR:</b> El núcleo no responde (Status: ${response.status})</div>`;
-            }
-        } catch (error) {
-            console.error("Error de conexión:", error);
-            win.innerHTML += `<div class="msg bot" style="color: #ff4d4d;"><b>ERROR CRÍTICO:</b> No se pudo establecer conexión con el host de Ngrok.</div>`;
+            const respuesta = await res.text();
+            output.innerHTML += `<div class="system-msg">AURELIAN: ${respuesta}</div>`;
+        } catch (e) {
+            output.innerHTML += `<div style="color:red;">Error de conexión.</div>`;
         }
+        output.scrollTop = output.scrollHeight;
+    }
 
-        win.scrollTop = win.scrollHeight;
+    // --- LÓGICA DEL LAB (TOKENS + COMBO) ---
+    async function analizarTokens() {
+        const text = document.getElementById('lab-input').value;
+        const model = document.getElementById('llm-model').value; // Captura del combo
+        const resultBox = document.getElementById('token-result');
+
+        if(!text) return alert("Escribe algo para analizar");
+
+        resultBox.innerText = "Calculando en n8n...";
+
+        try {
+            const res = await fetch(`${API_BASE}/tokens/analizar`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ prompt: text, model: model }) // Enviamos el modelo elegido
+            });
+            const data = await res.json();
+
+            // Formateamos la respuesta para que se vea profesional
+            resultBox.innerHTML = `
+MODELO: ${data.modelo_detectado || model}
+TOKENS: ${data.tokens || 'N/A'}
+CHARS:  ${data.caracteres || text.length}
+STATUS: SUCCESS
+                `;
+        } catch (e) {
+            resultBox.innerText = "Error: n8n no responde.";
+        }
     }
 </script>
 </body>
