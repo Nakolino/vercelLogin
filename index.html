@@ -105,9 +105,12 @@
             })
         })
             .then(response => {
+                // Dentro de tu fetch en index.html, en la parte de success:
                 if (response.ok) {
                     statusText.style.color = "#4CAF50";
                     statusText.innerText = "¡Acceso concedido!";
+                    // Redirigir al dashboard
+                    window.location.href = "dashboard.html";
                 } else {
                     statusText.style.color = "#e53935";
                     statusText.innerText = "Credenciales incorrectas.";

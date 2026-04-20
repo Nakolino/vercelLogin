@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>AURELIANAI - Dashboard</title>
+    <style>
+        body { margin: 0; display: flex; height: 100vh; background-color: #0b0d12; color: white; font-family: sans-serif; }
+
+        /* Sidebar */
+        .sidebar { width: 220px; background-color: #12151e; border-right: 1px solid #1f2533; padding: 20px; }
+        .nav-item { padding: 15px; cursor: pointer; color: #6a7387; font-weight: bold; border-radius: 6px; margin-bottom: 10px; }
+        .nav-item:hover { background-color: #1f2533; color: white; }
+
+        /* Contenedor Principal */
+        #content { flex: 1; padding: 40px; overflow-y: auto; }
+        .card { background: #12151e; padding: 25px; border-radius: 12px; border: 1px solid #1f2533; }
+    </style>
+</head>
+<body>
+
+<div class="sidebar">
+    <div style="font-weight: 900; font-size: 20px; margin-bottom: 30px;">AURELIANAI</div>
+    <div class="nav-item" onclick="loadModule('token-lab')">🧪 Token Lab</div>
+    <div class="nav-item" onclick="loadModule('architect')">🏗️ Architect Studio</div>
+    <div class="nav-item" onclick="loadModule('vault')">📂 Project Vault</div>
+    <div class="nav-item" onclick="loadModule('flow')">📊 Flow Vis</div>
+</div>
+
+<div id="content">
+    <div class="card">
+        <h2 id="module-title">Bienvenido, Agente</h2>
+        <p id="module-desc">Selecciona un módulo del menú lateral para comenzar.</p>
+    </div>
+</div>
+
+<script>
+    function loadModule(module) {
+        const title = document.getElementById('module-title');
+        const desc = document.getElementById('module-desc');
+
+        // Aquí puedes hacer un fetch a tus diferentes archivos o simplemente cambiar el texto/HTML
+        const modules = {
+            'token-lab': { t: 'Token Lab', d: 'Analizador de consumo y selección de LLMs.' },
+            'architect': { t: 'Architect Studio', d: 'Generador de features con IA.' },
+            'vault': { t: 'Project Vault', d: 'Gestión de proyectos y features.' },
+            'flow': { t: 'Flow Vis', d: 'Visualizador de diagramas funcionales.' }
+        };
+
+        title.innerText = modules[module].t;
+        desc.innerText = modules[module].d;
+    }
+</script>
+</body>
+</html>
