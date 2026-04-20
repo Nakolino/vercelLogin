@@ -3,51 +3,91 @@
 <head>
     <meta charset="UTF-8">
     <title>AURELIANAI - Dashboard</title>
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
     <style>
         body { margin: 0; display: flex; height: 100vh; background-color: #0b0d12; color: white; font-family: sans-serif; }
 
-        /* Sidebar */
-        .sidebar { width: 220px; background-color: #12151e; border-right: 1px solid #1f2533; padding: 20px; }
-        .nav-item { padding: 15px; cursor: pointer; color: #6a7387; font-weight: bold; border-radius: 6px; margin-bottom: 10px; }
+        /* Sidebar: Plegable */
+        .sidebar { width: 80px; background-color: #12151e; border-right: 1px solid #1f2533; padding: 20px 0; transition: width 0.3s; overflow: hidden; white-space: nowrap; flex-shrink: 0; }
+        .sidebar:hover { width: 220px; }
+
+        .nav-item { display: flex; align-items: center; padding: 15px 25px; cursor: pointer; color: #6a7387; font-weight: bold; transition: 0.2s; }
         .nav-item:hover { background-color: #1f2533; color: white; }
+        .nav-item span.material-icons { margin-right: 20px; min-width: 30px; }
 
         /* Contenedor Principal */
         #content { flex: 1; padding: 40px; overflow-y: auto; }
-        .card { background: #12151e; padding: 25px; border-radius: 12px; border: 1px solid #1f2533; }
+        .card { background: #12151e; padding: 25px; border-radius: 12px; border: 1px solid #1f2533; max-width: 800px; margin: auto; }
+
+        /* Estilos Chat */
+        .chat-container { display: flex; flex-direction: column; gap: 15px; }
+        #chat-window { height: 350px; background: #171b26; border-radius: 8px; padding: 15px; overflow-y: auto; border: 1px solid #232a3b; }
+        .input-area { display: flex; gap: 10px; }
+        input { flex: 1; padding: 12px; border-radius: 5px; border: 1px solid #232a3b; background: #12151e; color: white; }
+        button { padding: 10px 20px; background: #5c4dff; border: none; border-radius: 5px; color: white; cursor: pointer; font-weight: bold; }
     </style>
 </head>
 <body>
 
 <div class="sidebar">
-    <div style="font-weight: 900; font-size: 20px; margin-bottom: 30px;">AURELIANAI</div>
-    <div class="nav-item" onclick="loadModule('token-lab')">🧪 Token Lab</div>
-    <div class="nav-item" onclick="loadModule('architect')">🏗️ Architect Studio</div>
-    <div class="nav-item" onclick="loadModule('vault')">📂 Project Vault</div>
-    <div class="nav-item" onclick="loadModule('flow')">📊 Flow Vis</div>
+    <div style="text-align: center; margin-bottom: 30px; padding: 10px;">
+        <img src="logo-aurelian.svg" alt="Logo" style="width: 40px; height: 40px;">
+    </div>
+    <div class="nav-item" onclick="loadModule('token-lab')"><span class="material-icons">calculate</span> Token Lab</div>
+    <div class="nav-item" onclick="loadModule('architect')"><span class="material-icons">architecture</span> Architect</div>
+    <div class="nav-item" onclick="loadModule('vault')"><span class="material-icons">folder</span> Vault</div>
+    <div class="nav-item" onclick="loadModule('flow')"><span class="material-icons">account_tree</span> Flow</div>
 </div>
 
 <div id="content">
     <div class="card">
         <h2 id="module-title">Bienvenido, Agente</h2>
-        <p id="module-desc">Selecciona un módulo del menú lateral para comenzar.</p>
+        <div id="module-body">
+            <p>Selecciona un módulo del menú lateral para comenzar a operar.</p>
+        </div>
     </div>
 </div>
 
 <script>
     function loadModule(module) {
+        const body = document.getElementById('module-body');
         const title = document.getElementById('module-title');
-        const desc = document.getElementById('module-desc');
 
-        // Aquí puedes hacer un fetch a tus diferentes archivos o simplemente cambiar el texto/HTML
         const modules = {
             'token-lab': { t: 'Token Lab', d: 'Analizador de consumo y selección de LLMs.' },
             'architect': { t: 'Architect Studio', d: 'Generador de features con IA.' },
             'vault': { t: 'Project Vault', d: 'Gestión de proyectos y features.' },
-            'flow': { t: 'Flow Vis', d: 'Visualizador de diagramas funcionales.' }
+            'flow': { t: 'Flow Vis', d: 'Visualizador de diagramas.' }
         };
 
         title.innerText = modules[module].t;
-        desc.innerText = modules[module].d;
+
+        if (module === 'token-lab') {
+            body.innerHTML = `
+                    <div class="chat-container">
+                        <div id="chat-window">Esperando consulta...</div>
+                        <div class="input-area">
+                            <input type="text" id="chat-input" placeholder="Ej: Analiza este prompt...">
+                            <button onclick="sendChat()">Enviar</button>
+                        </div>
+                    </div>`;
+        } else {
+            body.innerHTML = "<p>Módulo en desarrollo: " + modules[module].d + "</p>";
+        }
+    }
+
+    function sendChat() {
+        const input = document.getElementById('chat-input');
+        const win = document.getElementById('chat-window');
+        if(!input.value) return;
+
+        win.innerHTML += `<div><b>Tú:</b> ${input.value}</div>`;
+
+        // Aquí es donde haremos el POST a tu API Java en el futuro
+        console.log("Enviando a n8n/Java:", input.value);
+
+        input.value = "";
+        win.scrollTop = win.scrollHeight;
     }
 </script>
 </body>
