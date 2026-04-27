@@ -29,4 +29,15 @@ export const AurelianCore = {
         });
         return await resp.json();
     }
+    async getSystemHealth() {
+        try {
+            const resp = await fetch(`${BASE_URL}/health?t=${Date.now()}`);
+            if (resp.ok) {
+                return await resp.json();
+            }
+            return null;
+        } catch (e) {
+            return null;
+        }
+    }
 };

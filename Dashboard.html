@@ -84,6 +84,15 @@
 
         .blink { animation: blinker 1s linear infinite; }
         @keyframes blinker { 50% { opacity: 0; } }
+        .blink {
+            animation: led-pulse 2s infinite;
+        }
+
+        @keyframes led-pulse {
+            0% { opacity: 1; box-shadow: 0 0 5px var(--terminal-green); }
+            50% { opacity: 0.4; box-shadow: 0 0 2px var(--terminal-green); }
+            100% { opacity: 1; box-shadow: 0 0 5px var(--terminal-green); }
+        }
     </style>
 </head>
 <body>
@@ -100,6 +109,19 @@
     <div class="nav-item" id="nav-arch" onclick="switchModule('architect')">
         <span class="material-icons">architecture</span>
         <span class="nav-text">Architect Studio</span>
+    </div>
+    <div class="health-monitor" style="padding: 15px; border-top: 1px solid var(--border-color); margin-top: auto;">
+        <p style="font-size: 8px; color: var(--gold); letter-spacing: 1px; margin-bottom: 10px; font-weight: 900;">VITAL SIGNS</p>
+        <div style="display: flex; flex-direction: column; gap: 8px;">
+            <div style="display: flex; align-items: center; justify-content: space-between;">
+                <span style="font-size: 9px; color: var(--text-dim);">POSTGRES</span>
+                <div id="led-db" style="width: 6px; height: 6px; border-radius: 50%; background: gray;"></div>
+            </div>
+            <div style="display: flex; align-items: center; justify-content: space-between;">
+                <span style="font-size: 9px; color: var(--text-dim);">N8N ENGINE</span>
+                <div id="led-n8n" style="width: 6px; height: 6px; border-radius: 50%; background: gray;"></div>
+            </div>
+        </div>
     </div>
     <div class="nav-item" onclick="logout()">
         <span class="material-icons">logout</span>
@@ -178,7 +200,7 @@
 </div>
 
 <script type="module">
-    import { AurelianCore } from './js/aurelian-core.js';
+    import {AurelianCore} from './js/aurelian-core.js';
 
     let timeLeft = 60;
     const circleFull = 88;
@@ -194,17 +216,32 @@
             const offset = circleFull - (timeLeft / 60) * circleFull;
             document.getElementById('js-progress').style.strokeDashoffset = offset;
             document.getElementById('timer-text').innerText = timeLeft;
-            if (timeLeft <= 0) { timeLeft = 60; syncData(); }
+            if (timeLeft <= 0) {
+                timeLeft = 60;
+                syncData();
+            }
         }, 1000);
     };
 
     async function syncData() {
+        // 1. Actualizar Salud del Sistema (Nuevo)
+        updateHealthIndicators();
+
+        // 2. Refrescar Logs
         const logs = await AurelianCore.getLogs();
-        document.getElementById('log-list').innerHTML = logs.map(l => `<p>${l}</p>`).join('');
-        const stats = await AurelianCore.getStats();
-        document.getElementById('stat-proyectos').innerText = stats.proyectos;
-        document.getElementById('stat-agentes').innerText = stats.agentes;
-        document.getElementById('stat-tareas').innerText = stats.tareas;
+        const logBox = document.getElementById('log-list');
+        logBox.innerHTML = logs.map(l => `<p>${l}</p>`).join('');
+        logBox.scrollTop = logBox.scrollHeight;
+
+        // 3. Refrescar Stats (Solo si estamos en el Overview)
+        if(document.getElementById('view-dashboard').classList.contains('active')) {
+            const stats = await AurelianCore.getStats();
+            if(stats) {
+                document.getElementById('stat-proyectos').innerText = stats.proyectos;
+                document.getElementById('stat-agentes').innerText = stats.agentes;
+                document.getElementById('stat-tareas').innerText = stats.tareas;
+            }
+        }
     }
 
     // NAVEGACIÓN PERSISTENTE (Solo oculta/muestra, no borra)
@@ -213,20 +250,24 @@
         document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
 
         document.getElementById(`view-${mod}`).classList.add('active');
-        const navMap = { 'token-lab': 'nav-token', 'architect': 'nav-arch' };
+        const navMap = {'token-lab': 'nav-token', 'architect': 'nav-arch'};
         if (navMap[mod]) document.getElementById(navMap[mod]).classList.add('active');
 
-        const titleMap = { 'token-lab': 'TOKEN LAB :: PERFORMANCE', 'architect': 'ARCHITECT STUDIO', 'dashboard': 'ESTADO IMPERIAL' };
+        const titleMap = {
+            'token-lab': 'TOKEN LAB :: PERFORMANCE',
+            'architect': 'ARCHITECT STUDIO',
+            'dashboard': 'ESTADO IMPERIAL'
+        };
         document.getElementById('module-title').innerText = titleMap[mod];
     };
 
     // BENCHMARK (Mantiene el chat acumulado)
-    window.startAnalysis = async function() {
+    window.startAnalysis = async function () {
         const input = document.getElementById('chat-input');
         const win = document.getElementById('chat-window');
         const prompt = input.value.trim();
         const modelVal = document.getElementById('model-select').value;
-        if(!prompt) return;
+        if (!prompt) return;
 
         const models = modelVal === 'all' ? ['llama3.2:latest', 'mistral-nemo:latest', 'codestral:latest'] : [modelVal];
         const tableId = `t-${Date.now()}`;
@@ -255,22 +296,41 @@
             try {
                 const data = await AurelianCore.runBenchmark(prompt, m);
                 const row = document.querySelector(`#${tableId} #row-${m.replace(/[:.]/g, '-')}`);
-                if(data.telemetria) {
+                if (data.telemetria) {
                     row.querySelector('.vel').innerText = data.telemetria.velocidad;
                     row.querySelector('.lat').innerText = data.telemetria.latencia_total;
                     row.querySelector('.status').innerHTML = `<span class="status-badge done">Done</span>`;
                 }
-            } catch (e) { console.error(e); }
+            } catch (e) {
+                console.error(e);
+            }
         }
         win.scrollTop = win.scrollHeight;
     };
 
     window.initArchitectFlow = async () => {
         const d = await AurelianCore.initProject(document.getElementById('proj-name').value, document.getElementById('proj-vision').value);
-        if(d.id) alert("Proyecto iniciado en el Tabularium.");
+        if (d.id) alert("Proyecto iniciado en el Tabularium.");
     };
 
-    window.logout = () => { localStorage.removeItem('aurelian_user'); window.location.href = "index.html"; };
+    window.logout = () => {
+        localStorage.removeItem('aurelian_user');
+        window.location.href = "index.html";
+    };
+    <div className="health-monitor" style="padding: 15px; border-top: 1px solid var(--border-color); margin-top: auto;">
+        <p style="font-size: 8px; color: var(--gold); letter-spacing: 1px; margin-bottom: 10px; font-weight: 900;">VITAL
+            SIGNS</p>
+        <div style="display: flex; flex-direction: column; gap: 8px;">
+            <div style="display: flex; align-items: center; justify-content: space-between;">
+                <span style="font-size: 9px; color: var(--text-dim);">POSTGRES</span>
+                <div id="led-db" style="width: 6px; height: 6px; border-radius: 50%; background: gray;"></div>
+            </div>
+            <div style="display: flex; align-items: center; justify-content: space-between;">
+                <span style="font-size: 9px; color: var(--text-dim);">N8N ENGINE</span>
+                <div id="led-n8n" style="width: 6px; height: 6px; border-radius: 50%; background: gray;"></div>
+            </div>
+        </div>
+    </div>
 </script>
 </body>
 </html>
