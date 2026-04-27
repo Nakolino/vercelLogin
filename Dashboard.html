@@ -18,7 +18,7 @@
         * { box-sizing: border-box; margin: 0; padding: 0; }
         body { font-family: 'Inter', sans-serif; background-color: var(--bg-dark); color: var(--text-main); display: flex; height: 100vh; overflow: hidden; }
 
-        /* --- SIDEBAR --- */
+        /* SIDEBAR */
         .sidebar { width: 80px; background-color: var(--panel-dark); border-right: 1px solid var(--border-color); padding: 20px 0; transition: width 0.3s; overflow: hidden; display: flex; flex-direction: column; z-index: 100; }
         .sidebar:hover { width: 260px; }
         .brand-container { display: flex; align-items: center; padding: 0 20px; margin-bottom: 40px; color: var(--accent-primary); cursor: pointer; }
@@ -26,7 +26,7 @@
         .sidebar:hover .brand-name { opacity: 1; }
 
         .nav-item { display: flex; align-items: center; padding: 15px 25px; cursor: pointer; color: var(--text-dim); border-left: 3px solid transparent; transition: 0.2s; }
-        .nav-item:hover, .nav-item.active { background-color: rgba(99, 102, 241, 0.1); color: white; border-left-color: var(--accent-primary); }
+        .nav-item.active { background-color: rgba(99, 102, 241, 0.1); color: white; border-left-color: var(--accent-primary); }
         .nav-item .material-icons { min-width: 30px; font-size: 24px; }
         .nav-text { opacity: 0; transition: 0.2s; margin-left: 20px; font-weight: bold; }
         .sidebar:hover .nav-text { opacity: 1; }
@@ -34,8 +34,8 @@
         /* VITAL SIGNS */
         .health-monitor { padding: 20px; border-top: 1px solid var(--border-color); margin-top: auto; opacity: 0; transition: 0.3s; }
         .sidebar:hover .health-monitor { opacity: 1; }
-        .led-row { display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px; }
-        .led { width: 8px; height: 8px; border-radius: 50%; background: #475569; transition: background 0.5s; }
+        .led-row { display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; }
+        .led { width: 8px; height: 8px; border-radius: 50%; background: #475569; transition: 0.5s; }
         .blink { animation: led-pulse 2s infinite; }
         @keyframes led-pulse {
             0% { opacity: 1; box-shadow: 0 0 8px var(--terminal-green); }
@@ -43,7 +43,7 @@
             100% { opacity: 1; box-shadow: 0 0 8px var(--terminal-green); }
         }
 
-        /* --- MAIN WRAPPER --- */
+        /* TOP BAR */
         #main-wrapper { flex: 1; display: flex; flex-direction: column; overflow: hidden; }
         .top-bar { padding: 15px 40px; border-bottom: 1px solid var(--border-color); display: flex; justify-content: space-between; align-items: center; background: rgba(2, 6, 23, 0.7); backdrop-filter: blur(10px); }
 
@@ -54,7 +54,7 @@
 
         .user-chip { display: flex; align-items: center; gap: 12px; cursor: pointer; padding: 6px 15px; border-radius: 50px; border: 1px solid var(--border-color); background: rgba(255,255,255,0.03); }
 
-        /* --- CONTENT --- */
+        /* CONTENT AREA */
         .content-area { padding: 40px; flex: 1; overflow-y: auto; }
         .card { background: rgba(11, 13, 18, 0.8); padding: 30px; border-radius: 16px; border: 1px solid var(--border-color); max-width: 1000px; margin: auto; }
 
@@ -62,8 +62,8 @@
         .module-view.active { display: block; animation: fadeIn 0.4s ease; }
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 
-        /* CHAT & BENCHMARK */
-        #chat-window { background:#05070a; border: 1px solid var(--border-color); padding: 20px; border-radius: 12px; height: 380px; overflow-y: auto; font-family: 'Courier New', monospace; margin-bottom: 20px; color: #a5b4fc; }
+        /* TABLAS Y CHAT */
+        #chat-window { background:#05070a; border: 1px solid var(--border-color); padding: 20px; border-radius: 12px; height: 380px; overflow-y: auto; font-family: monospace; margin-bottom: 20px; color: #a5b4fc; }
         .benchmark-table { width: 100%; border-collapse: collapse; margin-top: 15px; border: 1px solid var(--border-color); font-size: 12px; }
         .benchmark-table th { background: #12151e; color: var(--accent-primary); padding: 10px; text-align: left; text-transform: uppercase; letter-spacing: 1px; }
         .benchmark-table td { padding: 12px; border-bottom: 1px solid var(--border-color); }
@@ -146,10 +146,10 @@
                 <span class="input-label">PROJECT IDENTIFIER</span>
                 <input type="text" id="proj-name" placeholder="Nombre único para el Tabularium...">
 
-                <span class="input-label">STRATEGIC VISION (PROMPT)</span>
-                <textarea id="proj-vision" style="height: 150px; resize: none;" placeholder="Define los objetivos del Master Builder..."></textarea>
+                <span class="input-label">STRATEGIC VISION</span>
+                <textarea id="proj-vision" style="height: 150px; resize: none;" placeholder="Define la visión técnica aquí..."></textarea>
 
-                <button class="action-btn" onclick="window.initArchitectFlow()">INICIAR REFINAMIENTO IMPERIAL</button>
+                <button class="action-btn" onclick="window.initArchitectFlow()">INICIAR REFINAMIENTO</button>
 
                 <div id="arch-status" class="terminal-box" style="display:none; margin-top: 25px;">
                     <p class="blink">> Conectando con el Orquestador...</p>
@@ -198,7 +198,7 @@
     };
 
     async function syncData() {
-        // ACTUALIZAR VITAL SIGNS (SALUD)
+        // ACTUALIZAR SIGNOS VITALES
         const health = await AurelianCore.getSystemHealth();
         const dbLed = document.getElementById('led-db');
         const n8nLed = document.getElementById('led-n8n');
@@ -223,7 +223,7 @@
         document.getElementById('stat-tareas').innerText = stats.tareas;
     }
 
-    // --- FUNCIONES GLOBALES PARA EL HTML (Scope fix) ---
+    // --- SCOPE GLOBAL PARA BOTONES ---
 
     window.switchModule = (mod) => {
         document.querySelectorAll('.module-view').forEach(v => v.classList.remove('active'));
