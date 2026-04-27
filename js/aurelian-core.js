@@ -19,7 +19,7 @@ export const AurelianCore = {
      */
     async getSystemHealth() {
         try {
-            const resp = await fetch(`${BASE_URL}/health?t=${Date.now()}`, {
+            const resp = await fetch(`${BASE_URL}/agentes/health?t=${Date.now()}`, {
                 method: 'GET',
                 headers: DEFAULT_HEADERS
             });
