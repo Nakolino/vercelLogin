@@ -28,7 +28,6 @@
         .sidebar:hover { width: 260px; }
 
         .brand-container { display: flex; align-items: center; padding: 0 20px; margin-bottom: 40px; color: var(--accent-primary); cursor: pointer; transition: 0.3s; }
-        .brand-container:hover { filter: brightness(1.3); }
         .brand-name { font-family: 'Cinzel', serif; font-weight: 900; font-size: 18px; margin-left: 15px; opacity: 0; transition: opacity 0.3s; letter-spacing: 2px; }
         .sidebar:hover .brand-name { opacity: 1; }
 
@@ -38,47 +37,17 @@
         .nav-text { opacity: 0; transition: opacity 0.2s; margin-left: 20px; font-weight: bold; }
         .sidebar:hover .nav-text { opacity: 1; }
 
-        /* --- TOP BAR MODERNA --- */
+        /* --- TOP BAR --- */
         #main-wrapper { flex: 1; display: flex; flex-direction: column; background-image: radial-gradient(circle at top right, #161b2d 0%, #020617 40%); overflow: hidden; }
+        .top-bar { padding: 15px 40px; border-bottom: 1px solid var(--border-color); display: flex; justify-content: space-between; align-items: center; background: rgba(2, 6, 23, 0.7); backdrop-filter: blur(10px); }
 
-        .top-bar {
-            padding: 15px 40px;
-            border-bottom: 1px solid var(--border-color);
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            background: rgba(2, 6, 23, 0.7);
-            backdrop-filter: blur(10px);
-        }
-
-        .user-profile-top {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            background: rgba(255, 255, 255, 0.03);
-            padding: 8px 15px;
-            border-radius: 50px;
-            border: 1px solid var(--border-color);
-            cursor: default;
-        }
-
-        .user-avatar {
-            width: 32px;
-            height: 32px;
-            background: var(--accent-secondary);
-            border-radius: 50%;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            color: white;
-            font-size: 18px;
-        }
-
+        .user-profile-top { display: flex; align-items: center; gap: 12px; background: rgba(255, 255, 255, 0.03); padding: 8px 15px; border-radius: 50px; border: 1px solid var(--border-color); }
+        .user-avatar { width: 32px; height: 32px; background: var(--accent-secondary); border-radius: 50%; display: flex; justify-content: center; align-items: center; color: white; font-size: 18px; }
         .user-info { display: flex; flex-direction: column; }
-        .user-label { font-size: 9px; color: var(--text-dim); text-transform: uppercase; letter-spacing: 1px; font-weight: bold; }
+        .user-label { font-size: 9px; color: var(--text-dim); text-transform: uppercase; font-weight: bold; }
         .user-name { font-size: 13px; font-weight: 700; color: var(--text-main); }
 
-        /* --- CONTENT AREA --- */
+        /* --- CONTENT --- */
         .content-area { padding: 40px; flex: 1; overflow-y: auto; }
         .card { background: rgba(11, 13, 18, 0.8); backdrop-filter: blur(10px); padding: 30px; border-radius: 16px; border: 1px solid var(--border-color); max-width: 1000px; margin: auto; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
 
@@ -86,32 +55,20 @@
         .module-view.active { display: block; animation: fadeIn 0.4s ease; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
-        /* --- OVERVIEW CARDS --- */
+        /* --- STATS --- */
         .stat-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 25px; margin-bottom: 35px; }
-        .stat-card { background: #05070a; padding: 30px; border-radius: 14px; border: 1px solid var(--border-color); text-align: center; transition: 0.3s; }
-        .stat-card:hover { border-color: var(--accent-primary); transform: translateY(-5px); }
-        .stat-card h3 { color: var(--text-dim); font-size: 0.7rem; text-transform: uppercase; letter-spacing: 2px; margin-bottom: 15px; }
+        .stat-card { background: #05070a; padding: 30px; border-radius: 14px; border: 1px solid var(--border-color); text-align: center; }
         .stat-card p { font-size: 2.8rem; font-weight: 900; color: var(--accent-primary); font-family: 'Cinzel', serif; }
 
-        /* --- LOG FEED (NUEVO) --- */
-        .terminal-box {
-            margin-top: 15px;
-            background: #000;
-            padding: 15px;
-            border-left: 3px solid var(--accent-primary);
-            font-family: 'Courier New', monospace;
-            font-size: 11px;
-            color: var(--terminal-green);
-            height: 180px;
-            overflow-y: auto;
-            border-radius: 0 8px 8px 0;
-        }
-        .terminal-box p { margin-bottom: 6px; line-height: 1.4; }
+        /* --- TERMINAL / LOGS --- */
+        .terminal-box { margin-top: 15px; background: #000; padding: 15px; border-left: 3px solid var(--accent-primary); font-family: 'Courier New', monospace; font-size: 11px; color: var(--terminal-green); height: 180px; overflow-y: auto; }
+        .terminal-box p { margin-bottom: 6px; }
 
-        /* --- OTROS ELEMENTOS --- */
+        /* --- TOKEN LAB OUTPUT --- */
         #chat-window { height: 350px; background: #05070a; border-radius: 12px; padding: 20px; overflow-y: auto; border: 1px solid var(--border-color); font-family: 'Courier New', monospace; font-size: 13px; color: #a5b4fc; margin-bottom: 20px; }
         .msg.user { background: #1f2533; border: 1px solid #2d3748; padding: 12px; border-radius: 8px; margin-bottom: 12px; }
-        .msg.bot { background: #0b0d12; border: 1px solid var(--accent-primary); padding: 15px; border-radius: 8px; margin-bottom: 12px; }
+        .msg.bot { background: #0b0d12; border: 1px solid var(--accent-primary); padding: 15px; border-radius: 8px; margin-bottom: 12px; line-height: 1.6; }
+        .telemetry-row { color: var(--terminal-green); font-size: 11px; }
 
         .input-group { margin-bottom: 20px; text-align: left; }
         .input-group label { display: block; color: var(--accent-primary); font-size: 11px; font-weight: 900; margin-bottom: 8px; }
@@ -128,7 +85,6 @@
         <span class="material-icons" style="font-size: 32px;">shield</span>
         <span class="brand-name">AURELIAN AI</span>
     </div>
-
     <div class="nav-item" id="nav-token" onclick="switchModule('token-lab')">
         <span class="material-icons">calculate</span>
         <span class="nav-text">Token Lab</span>
@@ -145,16 +101,13 @@
 
 <div id="main-wrapper">
     <header class="top-bar">
-        <h2 id="module-title" style="font-family: 'Cinzel', serif; color: var(--accent-primary); letter-spacing: 1px;">ESTADO IMPERIAL</h2>
-
+        <h2 id="module-title" style="font-family: 'Cinzel', serif; color: var(--accent-primary);">ESTADO IMPERIAL</h2>
         <div class="user-profile-top">
             <div class="user-info">
                 <span class="user-label">Agente Activo</span>
                 <span id="display-user-name" class="user-name">---</span>
             </div>
-            <div class="user-avatar">
-                <span class="material-icons">person</span>
-            </div>
+            <div class="user-avatar"><span class="material-icons">person</span></div>
         </div>
     </header>
 
@@ -167,13 +120,9 @@
                     <div class="stat-card"><h3>Agentes</h3><p id="stat-agentes">--</p></div>
                     <div class="stat-card"><h3>Features</h3><p id="stat-tareas">--</p></div>
                 </div>
-
                 <div style="border-top: 1px solid var(--border-color); padding-top: 25px;">
                     <h4 style="font-family: 'Cinzel'; font-size: 0.8rem; color: var(--gold); letter-spacing: 2px;">LOG DE OPERACIONES REAL-TIME</h4>
-                    <div id="log-list" class="terminal-box">
-                        <p>> Sincronizando con el Tabularium...</p>
-                        <p>> Esperando señal del Núcleo Aurelian...</p>
-                    </div>
+                    <div id="log-list" class="terminal-box"></div>
                 </div>
             </div>
 
@@ -196,11 +145,11 @@
             <div id="view-architect" class="module-view">
                 <div class="input-group">
                     <label>NOMBRE DEL PROYECTO</label>
-                    <input type="text" id="proj-name" placeholder="Nombre único para el Tabularium..." autocomplete="off">
+                    <input type="text" id="proj-name" placeholder="Nombre único..." autocomplete="off">
                 </div>
                 <div class="input-group">
                     <label>VISIÓN ESTRATÉGICA</label>
-                    <textarea id="proj-vision" style="height: 150px; resize: none;" placeholder="Define la visión técnica aquí..."></textarea>
+                    <textarea id="proj-vision" style="height: 150px; resize: none;" placeholder="Define la visión técnica..."></textarea>
                 </div>
                 <button id="btn-refine" class="action-btn" onclick="initArchitectFlow()">INICIAR REFINAMIENTO</button>
                 <div id="terminal-output" class="terminal-box" style="display:none; height: auto;">
@@ -212,59 +161,45 @@
     </main>
 </div>
 
-<script>
-    // Configuración de Endpoints
-    const API_BASE = "http://localhost:8082/api/projects";
-    const AGENTE_API = "http://localhost:8082/api/agentes";
-    const TOKEN_URL = "https://ungraphitized-collette-rheumatoidally.ngrok-free.dev/api/tokens/analizar";
+<script type="module">
+    import { AurelianCore } from './js/aurelian-core.js';
 
-    // --- SESIÓN ---
+    // Sesión
     const activeUser = JSON.parse(localStorage.getItem('aurelian_user'));
-    if (!activeUser) {
-        window.location.href = "index.html";
-    }
+    if (!activeUser) window.location.href = "index.html";
 
     window.onload = () => {
         document.getElementById('display-user-name').innerText = activeUser.nombre.toUpperCase();
-
-        // Carga inicial
-        updateStats();
-        refreshLogs();
-
-        // Ciclos de refresco (Polling)
-        setInterval(updateStats, 30000); // Stats cada 30s
-        setInterval(refreshLogs, 5000);   // Logs cada 5s (Vivo)
+        syncData();
+        setInterval(syncData, 5000); // Polling de logs y stats
     };
 
-    // --- MEJORA 2: REFRESCAR LOGS ---
-    async function refreshLogs() {
-        try {
-            // Llamada al nuevo endpoint de LogService
-            const resp = await fetch(`${AGENTE_API}/logs`);
-            if (resp.ok) {
-                const logs = await resp.json();
-                const container = document.getElementById('log-list');
+    async function syncData() {
+        // Refrescar Logs
+        const logs = await AurelianCore.getLogs();
+        const logBox = document.getElementById('log-list');
+        logBox.innerHTML = logs.map(l => `<p>${l}</p>`).join('');
+        logBox.scrollTop = logBox.scrollHeight;
 
-                // Mapeamos los strings a párrafos de terminal
-                container.innerHTML = logs.map(line => `<p>${line}</p>`).join('');
-
-                // Autoscroll al final si hay mucha actividad
-                container.scrollTop = container.scrollHeight;
+        // Refrescar Stats (solo en vista dashboard)
+        if(document.getElementById('view-dashboard').classList.contains('active')) {
+            const stats = await AurelianCore.getStats();
+            if(stats) {
+                document.getElementById('stat-proyectos').innerText = stats.proyectos;
+                document.getElementById('stat-agentes').innerText = stats.agentes;
+                document.getElementById('stat-tareas').innerText = stats.tareas;
             }
-        } catch (e) {
-            console.error("> [SISTEMA]: Error de sincronización con el LogService.");
         }
     }
 
-    function switchModule(mod) {
+    // Navegación
+    window.switchModule = (mod) => {
         document.querySelectorAll('.module-view').forEach(v => v.classList.remove('active'));
         document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
 
         if(mod === 'dashboard') {
             document.getElementById('view-dashboard').classList.add('active');
             document.getElementById('module-title').innerText = "ESTADO IMPERIAL";
-            updateStats();
-            refreshLogs();
         } else if(mod === 'token-lab') {
             document.getElementById('view-token-lab').classList.add('active');
             document.getElementById('nav-token').classList.add('active');
@@ -276,76 +211,59 @@
         }
     }
 
-    async function updateStats() {
-        try {
-            const resp = await fetch(`${API_BASE}/stats`);
-            if(resp.ok) {
-                const data = await resp.json();
-                document.getElementById('stat-proyectos').innerText = data.proyectos;
-                document.getElementById('stat-agentes').innerText = data.agentes;
-                document.getElementById('stat-tareas').innerText = data.tareas;
-            }
-        } catch (e) { console.error("Error sincronizando Tabularium."); }
-    }
-
-    async function startAnalysis() {
+    // Lógica de Benchmark (Mejorada con Telemetría)
+    window.startAnalysis = async function() {
         const input = document.getElementById('chat-input');
         const win = document.getElementById('chat-window');
         const prompt = input.value.trim();
+        const val = document.getElementById('model-select').value;
         if(!prompt) return;
 
         win.innerHTML += `<div class="msg user">> [BENCHMARK]: ${prompt}</div>`;
         input.value = "";
         win.scrollTop = win.scrollHeight;
 
-        const val = document.getElementById('model-select').value;
         const models = val === 'all' ? ['llama3.2:latest', 'mistral-nemo:latest', 'codestral:latest'] : [val];
 
         for (const m of models) {
             const tid = `l-${m.replace(/[:.]/g, '-')}`;
-            win.innerHTML += `<div id="${tid}" style="font-size: 10px; color: var(--text-dim); margin-bottom: 8px;">> Analizando en ${m}...</div>`;
+            win.innerHTML += `<div id="${tid}" style="font-size: 10px; color: var(--text-dim); margin-bottom: 8px;">> Solicitando telemetría a ${m}...</div>`;
+
             try {
-                const resp = await fetch(TOKEN_URL, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json', 'ngrok-skip-browser-warning': 'true' },
-                    body: JSON.stringify({ prompt, model: m })
-                });
-                if(resp.ok) {
-                    const d = await resp.json();
-                    document.getElementById(tid).innerHTML = `<div class="msg bot"><b>${m}:</b> ${d.telemetria.velocidad} | ${d.telemetria.latencia_total}</div>`;
+                const data = await AurelianCore.runBenchmark(prompt, m);
+                if(data.telemetria) {
+                    const t = data.telemetria;
+                    document.getElementById(tid).innerHTML = `
+                        <div class="msg bot">
+                            <b style="color:var(--gold)">${m.toUpperCase()}</b><br>
+                            <div class="telemetry-row">• Velocidad: ${t.velocidad}</div>
+                            <div class="telemetry-row">• Latencia: ${t.latencia_total}</div>
+                            <div class="telemetry-row">• Tokens: IN: ${t.tokens_entrada} | OUT: ${t.tokens_salida}</div>
+                        </div>`;
                 }
-            } catch (e) { document.getElementById(tid).innerText = `> [FAIL] ${m}`; }
+            } catch (e) {
+                document.getElementById(tid).innerText = `> [FAIL]: Error en la conexión con el Core para ${m}.`;
+            }
         }
         win.scrollTop = win.scrollHeight;
     }
 
-    async function initArchitectFlow() {
+    window.initArchitectFlow = async function() {
         const nombre = document.getElementById('proj-name').value;
         const vision = document.getElementById('proj-vision').value;
         const status = document.getElementById('status-line');
-        const btn = document.getElementById('btn-refine');
         if(!nombre || !vision) return alert("Faltan datos.");
 
-        btn.disabled = true;
         document.getElementById('terminal-output').style.display = "block";
         status.innerText = "> Enviando visión al Core...";
 
         try {
-            const resp = await fetch(`${API_BASE}/init`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ nombre, vision })
-            });
-            if(resp.ok) {
-                const d = await resp.json();
-                status.innerHTML = `<span style="color: var(--terminal-green);">> [OK]: Proyecto #${d.id} en Tabularium.</span>`;
-                updateStats();
-            }
+            const d = await AurelianCore.initProject(nombre, vision);
+            status.innerHTML = `<span style="color: var(--terminal-green);">> [OK]: Proyecto #${d.id} en Tabularium.</span>`;
         } catch (e) { status.innerText = "> [ERROR]: Fallo de conexión."; }
-        finally { setTimeout(() => { btn.disabled = false; }, 3000); }
     }
 
-    function logout() {
+    window.logout = () => {
         localStorage.removeItem('aurelian_user');
         window.location.href = "index.html";
     }
