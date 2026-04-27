@@ -2,195 +2,334 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <title>AURELIAN AI - Dashboard</title>
-    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;900&display=swap" rel="stylesheet">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AURELIAN :: Command Center</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700;900&family=Inter:wght@300;400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 
     <style>
-        body { margin: 0; display: flex; height: 100vh; background-color: #0b0d12; color: white; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; overflow: hidden; }
+        :root {
+            --bg-dark: #020617;
+            --panel-dark: #0b0d12;
+            --accent-primary: #6366f1;
+            --accent-secondary: #4338ca;
+            --text-main: #e2e8f0;
+            --text-dim: #94a3b8;
+            --border-color: #1e1b4b;
+            --terminal-green: #4ade80;
+        }
 
-        /* Sidebar */
-        .sidebar { width: 80px; background-color: #12151e; border-right: 1px solid #1f2533; padding: 20px 0; transition: width 0.3s ease; overflow: hidden; white-space: nowrap; flex-shrink: 0; z-index: 10; }
-        .sidebar:hover { width: 260px; }
-        .brand-container { display: flex; align-items: center; padding: 0 20px; margin-bottom: 30px; }
-        .brand-name { font-family: 'Cinzel', serif; font-weight: 900; font-size: 18px; margin-left: 15px; opacity: 0; transition: opacity 0.3s; color: #ffffff; letter-spacing: 1px; }
-        .sidebar:hover .brand-name { opacity: 1; }
-        .nav-item { display: flex; align-items: center; padding: 15px 25px; cursor: pointer; color: #6a7387; font-weight: bold; transition: 0.2s; }
-        .nav-item:hover { background-color: #1f2533; color: white; }
-        .nav-item span.material-icons { min-width: 30px; font-size: 24px; }
-        .nav-text { opacity: 0; transition: opacity 0.2s; margin-left: 20px; }
-        .sidebar:hover .nav-text { opacity: 1; }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
 
-        /* Contenido */
-        #content { flex: 1; padding: 40px; overflow-y: auto; background-image: radial-gradient(circle at top right, #161b2d 0%, #0b0d12 40%); }
-        .card { background: rgba(18, 21, 30, 0.8); backdrop-filter: blur(10px); padding: 30px; border-radius: 16px; border: 1px solid #1f2533; max-width: 950px; margin: auto; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg-dark);
+            color: var(--text-main);
+            display: flex;
+            height: 100vh;
+            overflow: hidden;
+        }
 
-        /* Chat Window */
-        #chat-window { height: 420px; background: #0b0d12; border-radius: 12px; padding: 20px; overflow-y: auto; border: 1px solid #232a3b; font-family: 'Courier New', monospace; font-size: 13px; color: #a5b4fc; }
-        .msg { margin-bottom: 12px; padding: 12px 16px; border-radius: 8px; max-width: 95%; }
-        .msg.user { background: #1f2533; align-self: flex-end; border: 1px solid #2d3748; color: white; }
-        .msg.bot { background: #161b2d; border: 1px solid #5c4dff; align-self: flex-start; width: 98%; }
+        /* --- SIDEBAR --- */
+        .sidebar {
+            width: 260px;
+            background: var(--panel-dark);
+            border-right: 1px solid var(--border-color);
+            display: flex;
+            flex-direction: column;
+            padding: 20px;
+        }
 
-        /* Telemetry Styles */
-        .tech-value { color: #00ffcc; font-weight: 900; }
-        .critical-value { color: #facc15; }
+        .brand {
+            font-family: 'Cinzel', serif;
+            font-weight: 900;
+            font-size: 1.5rem;
+            color: var(--accent-primary);
+            margin-bottom: 40px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
 
-        /* Tabla de Comparativa con nueva columna */
-        .rank-table { width: 100%; border-collapse: collapse; margin-top: 15px; background: #0a0a0a; border: 1px solid #3730a3; }
-        .rank-table th { background: #1f2533; color: #818cf8; text-align: left; padding: 10px; font-size: 10px; border-bottom: 2px solid #3730a3; text-transform: uppercase; }
-        .rank-table td { padding: 12px 10px; border-bottom: 1px solid #1f2533; font-size: 12px; }
-        .rank-first { color: #facc15; font-weight: 900; background: rgba(250, 204, 21, 0.05); }
+        .nav-menu { list-style: none; flex-grow: 1; }
 
-        .input-area { display: flex; gap: 10px; margin-top: 10px; }
-        input#chat-input { flex: 1; padding: 14px; border-radius: 8px; border: 1px solid #232a3b; background: #12151e; color: white; outline: none; }
-        select#model-select { background: #12151e; color: #a5b4fc; border: 1px solid #232a3b; padding: 10px; border-radius: 8px; font-weight: bold; cursor: pointer; }
-        button#send-btn { padding: 0 25px; background: #5c4dff; color: white; border: none; border-radius: 8px; cursor: pointer; font-weight: 800; transition: 0.3s; }
+        .nav-item {
+            padding: 12px 15px;
+            margin-bottom: 8px;
+            cursor: pointer;
+            border-radius: 8px;
+            transition: 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            color: var(--text-dim);
+            font-size: 0.9rem;
+        }
+
+        .nav-item:hover, .nav-item.active {
+            background: rgba(99, 102, 241, 0.1);
+            color: var(--text-main);
+            border-left: 3px solid var(--accent-primary);
+        }
+
+        /* --- MAIN CONTENT --- */
+        .main-content {
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+            overflow-y: auto;
+        }
+
+        .top-bar {
+            padding: 20px 40px;
+            background: rgba(11, 13, 18, 0.5);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .module-container { padding: 40px; }
+
+        /* --- UI DEL ARCHITECT STUDIO --- */
+        .architect-ui {
+            max-width: 800px;
+            margin: 0 auto;
+            background: var(--panel-dark);
+            padding: 35px;
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+        }
+
+        .sentinel-header {
+            color: var(--accent-primary);
+            font-family: 'Cinzel', serif;
+            margin-bottom: 30px;
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 10px;
+            font-size: 0.8rem;
+            letter-spacing: 2px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .input-group { margin-bottom: 25px; text-align: left; }
+
+        .input-group label {
+            display: block;
+            color: var(--accent-primary);
+            font-size: 11px;
+            font-weight: 900;
+            margin-bottom: 10px;
+            letter-spacing: 1.5px;
+        }
+
+        .input-group input, .input-group textarea {
+            width: 100%;
+            background: #020617;
+            border: 1px solid var(--border-color);
+            padding: 15px;
+            color: white;
+            border-radius: 8px;
+            font-family: 'Inter', sans-serif;
+            font-size: 1rem;
+            transition: 0.3s;
+        }
+
+        .input-group input:focus, .input-group textarea:focus {
+            border-color: var(--accent-primary);
+            outline: none;
+            box-shadow: 0 0 10px rgba(99, 102, 241, 0.2);
+        }
+
+        .input-group textarea { height: 150px; resize: none; }
+
+        #btn-refine {
+            width: 100%;
+            padding: 18px;
+            background: linear-gradient(45deg, var(--accent-secondary), var(--accent-primary));
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-family: 'Cinzel', serif;
+            font-weight: 900;
+            cursor: pointer;
+            transition: 0.3s;
+            letter-spacing: 2px;
+        }
+
+        #btn-refine:hover { transform: translateY(-2px); box-shadow: 0 5px 20px rgba(99, 102, 241, 0.4); }
+        #btn-refine:disabled { opacity: 0.5; cursor: not-allowed; }
+
+        .terminal-box {
+            margin-top: 30px;
+            background: #020617;
+            padding: 20px;
+            border-left: 3px solid var(--terminal-green);
+            font-family: 'Courier New', monospace;
+            font-size: 13px;
+            text-align: left;
+            line-height: 1.6;
+        }
+
+        .blink { animation: blinker 1s linear infinite; }
+        @keyframes blinker { 50% { opacity: 0; } }
+
+        /* Estilo para el Dashboard principal */
+        .stat-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
+        .stat-card { background: var(--panel-dark); padding: 25px; border-radius: 12px; border: 1px solid var(--border-color); }
+        .stat-card h3 { color: var(--text-dim); font-size: 0.8rem; margin-bottom: 10px; }
+        .stat-card p { font-size: 2rem; font-weight: bold; color: var(--accent-primary); }
     </style>
 </head>
 <body>
 
-<div class="sidebar">
-    <div class="brand-container">
-        <img src="logo-aurelian.svg" alt="Aurelian Logo" style="width: 40px; height: 40px;">
-        <span class="brand-name">AURELIAN AI</span>
+<aside class="sidebar">
+    <div class="brand">
+        <i class="fas fa-crown"></i>
+        AURELIAN
     </div>
-    <div class="nav-item" onclick="loadModule('token-lab')"><span class="material-icons">calculate</span><span class="nav-text">Token Lab</span></div>
-    <div class="nav-item" onclick="loadModule('architect')"><span class="material-icons">architecture</span><span class="nav-text">Architect Studio</span></div>
-</div>
+    <ul class="nav-menu">
+        <li class="nav-item active" onclick="loadModule('dashboard')">
+            <i class="fas fa-chart-line"></i> Dashboard
+        </li>
+        <li class="nav-item" onclick="loadModule('architect')">
+            <i class="fas fa-compass-drafting"></i> Architect Studio
+        </li>
+        <li class="nav-item" onclick="loadModule('agents')">
+            <i class="fas fa-robot"></i> Legio AI
+        </li>
+        <li class="nav-item" onclick="loadModule('settings')">
+            <i class="fas fa-cog"></i> Configuración
+        </li>
+    </ul>
+</aside>
 
-<div id="content">
-    <div class="card">
-        <h2 id="module-title" style="font-family: 'Cinzel', serif; letter-spacing: 2px; color: #5c4dff;">AURELIAN CORE</h2>
-        <div id="module-body">
-            <p style="color: #6a7387;">Inicie el protocolo de análisis en el Token Lab.</p>
+<main class="main-content">
+    <header class="top-bar">
+        <h2 id="module-title" style="font-family: 'Cinzel', serif;">CENTRO DE MANDO</h2>
+        <div class="user-profile">
+            <span style="font-size: 0.8rem; color: var(--text-dim);">PROJECT LEAD :: </span>
+            <span style="font-weight: bold;">IÑAKI</span>
         </div>
-    </div>
-</div>
+    </header>
+
+    <section id="module-body" class="module-container">
+    </section>
+</main>
 
 <script>
-    const BACKEND_URL = "https://ungraphitized-collette-rheumatoidally.ngrok-free.dev/api/tokens/analizar";
+    // Inicializar el Dashboard al cargar
+    window.onload = () => loadModule('dashboard');
 
     function loadModule(module) {
-        if (module === 'token-lab') {
-            document.getElementById('module-title').innerText = "TOKEN LAB :: PERFORMANCE PROFILER";
-            document.getElementById('module-body').innerHTML = `
-                <div class="chat-container">
-                    <div id="chat-window">PROTOCOLO LISTO. Seleccione objetivo de análisis.</div>
-                    <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 5px;">
-                        <label style="font-size: 11px; color: #6a7387; font-weight: 800;">LLM TARGET:</label>
-                        <select id="model-select">
-                            <option value="all">TEST_ALL (Comparativa de Velocidad)</option>
-                            <option value="llama3.2:latest">Llama 3.2 (2.0 GB)</option>
-                            <option value="codestral:latest">Codestral (12 GB)</option>
-                            <option value="mistral-nemo:latest">Mistral Nemo (7.1 GB)</option>
-                        </select>
+        const body = document.getElementById('module-body');
+        const title = document.getElementById('module-title');
+
+        // Actualizar navegación visual
+        document.querySelectorAll('.nav-item').forEach(item => item.classList.remove('active'));
+        event?.currentTarget?.classList?.add('active');
+
+        if (module === 'dashboard') {
+            title.innerText = "ESTADO DE LA LEGIÓN";
+            body.innerHTML = `
+                    <div class="stat-grid">
+                        <div class="stat-card"><h3>PROYECTOS ACTIVOS</h3><p>0</p></div>
+                        <div class="stat-card"><h3>AGENTES EN LÍNEA</h3><p>2</p></div>
+                        <div class="stat-card"><h3>TAREAS COMPLETADAS</h3><p>12</p></div>
                     </div>
-                    <div class="input-area">
-                        <input type="text" id="chat-input" placeholder="Escribe un prompt para el benchmark..." onkeypress="if(event.key==='Enter') startAnalysis()">
-                        <button id="send-btn" onclick="startAnalysis()">EJECUTAR TEST</button>
+                    <div style="margin-top: 40px; padding: 20px; border: 1px dashed var(--border-color); text-align: center;">
+                        <p style="color: var(--text-dim);">No hay eventos recientes en el Tabularium.</p>
                     </div>
-                </div>`;
+                `;
+        }
+
+        if (module === 'architect') {
+            title.innerText = "ARCHITECT STUDIO :: SENTINEL V1.0";
+            body.innerHTML = `
+                    <div class="architect-ui">
+                        <div class="sentinel-header">
+                            <i class="fas fa-microchip"></i>
+                            <span>SISTEMA DE ANÁLISIS DE VISIÓN ACTIVO</span>
+                        </div>
+
+                        <div class="input-group">
+                            <label>NOMBRE DEL PROYECTO (TABULARIUM ID)</label>
+                            <input type="text" id="proj-name" placeholder="Ej: Operacion Aureliano..." autocomplete="off">
+                        </div>
+
+                        <div class="input-group">
+                            <label>VISIÓN TÉCNICA (DESGLOSE PARA EL SENTINEL)</label>
+                            <textarea id="proj-vision" placeholder="Describe tu idea técnica. El Sentinel desglosará las features automáticamente..."></textarea>
+                        </div>
+
+                        <button id="btn-refine" onclick="initArchitectFlow()">
+                            <i class="fas fa-scroll"></i> INICIAR REFINAMIENTO IMPERIAL
+                        </button>
+
+                        <div id="terminal-output" class="terminal-box" style="display:none;">
+                            <p>> [SISTEMA]: Conectando con el Core 8082...</p>
+                            <p id="status-line" class="blink"></p>
+                        </div>
+                    </div>
+                `;
+        }
+
+        if (module === 'agents') {
+            title.innerText = "LEGIO AI :: AGENTES";
+            body.innerHTML = `<p style="color: var(--text-dim);">Módulo en desarrollo. Los agentes están en los cuarteles.</p>`;
         }
     }
 
-    async function startAnalysis() {
-        const input = document.getElementById('chat-input');
-        const modelSelect = document.getElementById('model-select');
-        const win = document.getElementById('chat-window');
-        const prompt = input.value.trim();
-        const selectedOption = modelSelect.value;
+    async function initArchitectFlow() {
+        const nombre = document.getElementById('proj-name').value;
+        const vision = document.getElementById('proj-vision').value;
+        const terminal = document.getElementById('terminal-output');
+        const statusLine = document.getElementById('status-line');
+        const btn = document.getElementById('btn-refine');
 
-        if(!prompt) return;
+        if (!nombre || !vision) {
+            alert("Emperador, el Sentinel requiere datos para procesar.");
+            return;
+        }
 
-        win.innerHTML = `<div class="msg user">> [STRESS_TEST_INIT] ${prompt}</div>`;
-        input.value = "";
+        // Feedback Visual
+        btn.disabled = true;
+        btn.innerHTML = "<i class='fas fa-spinner fa-spin'></i> TRANSMITIENDO...";
+        terminal.style.display = "block";
+        statusLine.innerText = "> [INFO]: Sanitizando y enviando al Tabularium...";
 
-        const modelsToTest = selectedOption === 'all'
-            ? ['llama3.2:latest', 'mistral-nemo:latest', 'codestral:latest']
-            : [selectedOption];
+        try {
+            // Llamada al Backend de Spring Boot
+            const response = await fetch("http://localhost:8082/api/projects/init", {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ nombre: nombre, vision: vision })
+            });
 
-        let results = [];
+            if (response.ok) {
+                const data = await response.json();
+                statusLine.innerHTML = `
+                        <span style="color: #4ade80;">> [OK]: Proyecto #${data.id} guardado con éxito.</span><br>
+                        <span style="color: #a5b4fc;">> [WAIT]: Master Builder invocado en n8n...</span>
+                    `;
 
-        for (const model of modelsToTest) {
-            const statusId = `status-${model.replace(/[:.]/g, '-')}`;
-            win.innerHTML += `<div id="${statusId}" style="color: #6a7387; font-size: 11px; margin-bottom: 5px;">> Analizando prompt en ${model}...</div>`;
-            win.scrollTop = win.scrollHeight;
-
-            try {
-                const response = await fetch(BACKEND_URL, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json', 'ngrok-skip-browser-warning': 'true' },
-                    body: JSON.stringify({ prompt: prompt, model: model })
-                });
-
-                if (response.ok) {
-                    const data = await response.json();
-                    const t = data.telemetria || {};
-                    const speedNum = t.velocidad ? parseFloat(t.velocidad.split(' ')[0]) : 0;
-
-                    results.push({
-                        model,
-                        speed: t.velocidad || '0 t/s',
-                        speedNum,
-                        latency: t.latencia_total || '0s',
-                        promptTokens: t.tokens_entrada || 0 // Capturamos los tokens del prompt
-                    });
-
-                    document.getElementById(statusId).innerHTML = `<span style="color: #4ade80;">> [OK] ${model} procesado exitosamente.</span>`;
-                }
-            } catch (error) {
-                document.getElementById(statusId).innerHTML = `<span style="color: #f87171;">> [ERROR] ${model} no responde.</span>`;
+                // Resetear botón después de éxito
+                setTimeout(() => {
+                    btn.disabled = false;
+                    btn.innerHTML = "<i class='fas fa-scroll'></i> INICIAR REFINAMIENTO IMPERIAL";
+                }, 4000);
+            } else {
+                throw new Error("Error en el servidor");
             }
-            win.scrollTop = win.scrollHeight;
+        } catch (error) {
+            statusLine.innerHTML = `<span style="color: #f87171;">> [ERROR]: No se pudo contactar con el Backend (Puerto 8082).</span>`;
+            btn.disabled = false;
+            btn.innerText = "REINTENTAR INVOCACIÓN";
         }
-
-        if(results.length > 0) renderComparison(results, win);
-    }
-
-    function renderComparison(results, win) {
-        results.sort((a, b) => b.speedNum - a.speedNum);
-
-        let tableHtml = `
-            <div class="msg bot">
-                <b style="color: #facc15; letter-spacing: 1.5px;">CORE::BENCHMARK_COMPLETE</b>
-                <p style="font-size: 11px; color: #94a3b8; margin: 5px 0 15px 0;">Análisis comparativo de tokens y rendimiento de red.</p>
-
-                <table class="rank-table">
-                    <thead>
-                        <tr>
-                            <th>RANK</th>
-                            <th>ENGINE</th>
-                            <th>P-TOKENS</th> <th>SPEED (TPS)</th>
-                            <th>LATENCY</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-        `;
-
-        results.forEach((res, index) => {
-            const isFirst = index === 0;
-            const rowClass = isFirst ? 'class="rank-first"' : '';
-            tableHtml += `
-                <tr ${rowClass}>
-                    <td>#${index + 1}</td>
-                    <td>${res.model}</td>
-                    <td style="color: #818cf8; font-weight: bold;">${res.promptTokens}</td> <td class="critical-value">${res.speed}</td>
-                    <td>${res.latency}</td>
-                </tr>
-            `;
-        });
-
-        tableHtml += `
-                    </tbody>
-                </table>
-                <div style="margin-top: 15px; font-size: 10px; color: #a5b4fc; border-top: 1px solid #3730a3; padding-top: 10px;">
-                    <b>OBSERVACIÓN TÉCNICA:</b> El conteo de <b>P-TOKENS</b> varía según el Tokenizer de cada modelo.
-                </div>
-            </div>
-        `;
-
-        win.innerHTML += tableHtml;
-        win.scrollTop = win.scrollHeight;
     }
 </script>
 </body>
