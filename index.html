@@ -3,7 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AURELIAN :: Acceso al Sistema</title>
+    <title>AURELIAN AI :: Acceso al Sistema</title>
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700;900&family=Inter:wght@300;400;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 
@@ -44,11 +45,8 @@
             backdrop-filter: blur(10px);
         }
 
-        .logo-area {
-            margin-bottom: 30px;
-        }
-
-        .logo-area i {
+        .logo-area { margin-bottom: 30px; }
+        .logo-area .shield-icon {
             font-size: 3rem;
             color: var(--accent-primary);
             margin-bottom: 15px;
@@ -62,10 +60,7 @@
             color: #ffffff;
         }
 
-        .login-header {
-            margin-bottom: 30px;
-        }
-
+        .login-header { margin-bottom: 30px; }
         .login-header p {
             font-size: 0.8rem;
             color: var(--text-dim);
@@ -76,6 +71,7 @@
         .input-group {
             margin-bottom: 20px;
             text-align: left;
+            position: relative; /* Crítico para posicionar el ojo */
         }
 
         .input-group label {
@@ -91,7 +87,7 @@
             width: 100%;
             background-color: #05070a;
             border: 1px solid var(--border-color);
-            padding: 14px 16px;
+            padding: 14px 45px 14px 16px; /* Más espacio a la derecha para el icono */
             color: white;
             border-radius: 8px;
             font-family: 'Inter', sans-serif;
@@ -103,6 +99,22 @@
             outline: none;
             border-color: var(--accent-primary);
             box-shadow: 0 0 10px rgba(99, 102, 241, 0.2);
+        }
+
+        /* Estilo del Ojo */
+        #togglePassword {
+            position: absolute;
+            right: 15px;
+            top: 35px; /* Alineado con el input debajo del label */
+            cursor: pointer;
+            color: var(--text-dim);
+            font-size: 20px;
+            transition: 0.3s;
+            user-select: none;
+        }
+
+        #togglePassword:hover {
+            color: var(--accent-primary);
         }
 
         button {
@@ -126,15 +138,16 @@
             box-shadow: 0 5px 20px rgba(99, 102, 241, 0.4);
         }
 
-        button:active {
-            transform: translateY(0);
+        button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
         }
 
         #statusText {
             margin-top: 20px;
             font-size: 12px;
             font-weight: 600;
-            min-height: 15px;
+            min-height: 18px;
         }
 
         .footer-note {
@@ -149,12 +162,12 @@
 
 <div class="login-container">
     <div class="logo-area">
-        <i class="fas fa-shield-halved"></i>
+        <span class="material-icons shield-icon">shield</span>
         <h1>AURELIAN</h1>
     </div>
 
     <div class="login-header">
-        <p>Acceso al Tabularium</p>
+        <p>Protocolo de Acceso</p>
     </div>
 
     <form id="loginForm">
@@ -166,6 +179,7 @@
         <div class="input-group">
             <label for="password">CÓDIGO DE ACCESO</label>
             <input type="password" id="password" placeholder="••••••••" required>
+            <span class="material-icons" id="togglePassword">visibility_off</span>
         </div>
 
         <button type="submit" id="loginBtn">INICIAR PROTOCOLO</button>
@@ -174,14 +188,26 @@
     <p id="statusText"></p>
 
     <div class="footer-note">
-        SISTEMA DE GESTIÓN DE AGENTES V1.0
+        SISTEMA DE GESTIÓN DE AGENTES V1.2
     </div>
 </div>
 
 <script>
-    // Dirección del backend de Spring Boot
     const API_URL = "http://localhost:8082/api/agentes/login";
 
+    // --- LÓGICA DE VISIBILIDAD DE CONTRASEÑA ---
+    const togglePassword = document.querySelector('#togglePassword');
+    const passwordInput = document.querySelector('#password');
+
+    togglePassword.addEventListener('click', function() {
+        const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
+        passwordInput.setAttribute('type', type);
+
+        this.innerText = type === 'password' ? 'visibility_off' : 'visibility';
+        this.style.color = type === 'password' ? 'var(--text-dim)' : 'var(--accent-primary)';
+    });
+
+    // --- LÓGICA DE LOGIN ---
     document.getElementById('loginForm').addEventListener('submit', async function(e) {
         e.preventDefault();
 
@@ -191,7 +217,7 @@
         const loginBtn = document.getElementById('loginBtn');
 
         // Feedback Visual
-        statusText.style.color = "#94a3b8";
+        statusText.style.color = "var(--text-dim)";
         statusText.innerText = "VERIFICANDO CREDENCIALES...";
         loginBtn.disabled = true;
         loginBtn.innerText = "PROCESANDO...";
@@ -199,29 +225,22 @@
         try {
             const response = await fetch(API_URL, {
                 method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({
-                    nombre: username,
-                    password: password
-                })
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ nombre: username, password: password })
             });
 
             if (response.ok) {
-                // 1. CAPTURAMOS EL OBJETO AGENTE COMPLETO
                 const agente = await response.json();
 
-                // 2. PERSISTENCIA EN SESIÓN
+                // PERSISTENCIA INDUSTRIAL: Guardamos el objeto Agente
                 localStorage.setItem('aurelian_user', JSON.stringify(agente));
 
                 statusText.style.color = "#4ade80";
-                statusText.innerText = "ACCESO CONCEDIDO. REDIRECCIONANDO...";
+                statusText.innerText = "ACCESO CONCEDIDO. SINCRONIZANDO...";
 
-                // Redirigir al Dashboard tras un breve delay
                 setTimeout(() => {
                     window.location.href = "Dashboard.html";
-                }, 1000);
+                }, 800);
             } else {
                 statusText.style.color = "#f87171";
                 statusText.innerText = "ERROR: CREDENCIALES INVÁLIDAS.";
@@ -230,16 +249,14 @@
             }
         } catch (error) {
             statusText.style.color = "#f87171";
-            statusText.innerText = "ERROR: NO SE PUDO CONTACTAR AL SERVIDOR.";
+            statusText.innerText = "ERROR: CORE NO RESPONDE (8082).";
             loginBtn.disabled = false;
             loginBtn.innerText = "REINTENTAR";
-            console.error("Login Error:", error);
         }
     });
 
-    // Limpiar sesión al cargar el login por seguridad
+    // Limpiar rastro al cargar el login por seguridad
     localStorage.removeItem('aurelian_user');
 </script>
 </body>
-</html>
 </html>
