@@ -23,46 +23,56 @@
         .brand-name { font-family: 'Cinzel', serif; font-weight: 900; font-size: 18px; margin-left: 15px; opacity: 0; transition: 0.3s; letter-spacing: 2px; }
         .sidebar:hover .brand-name { opacity: 1; }
 
-        .nav-item { display: flex; align-items: center; padding: 15px 25px; cursor: pointer; color: var(--text-dim); border-left: 3px solid transparent; }
+        .nav-item { display: flex; align-items: center; padding: 15px 25px; cursor: pointer; color: var(--text-dim); border-left: 3px solid transparent; transition: 0.2s; }
         .nav-item.active { background-color: rgba(99, 102, 241, 0.1); color: white; border-left-color: var(--accent-primary); }
         .nav-item .material-icons { min-width: 30px; }
         .nav-text { opacity: 0; transition: 0.2s; margin-left: 20px; font-weight: bold; }
         .sidebar:hover .nav-text { opacity: 1; }
 
-        /* VITAL SIGNS */
+        /* VITAL SIGNS (LEDs) */
         .health-monitor { padding: 15px; border-top: 1px solid var(--border-color); margin-top: auto; opacity: 0; transition: 0.3s; }
         .sidebar:hover .health-monitor { opacity: 1; }
-        .led { width: 8px; height: 8px; border-radius: 50%; background: #475569; }
+        .led { width: 8px; height: 8px; border-radius: 50%; background: #475569; transition: background 0.5s ease; }
+
         .blink { animation: led-pulse 2s infinite; }
         @keyframes led-pulse {
             0% { opacity: 1; box-shadow: 0 0 8px var(--terminal-green); }
-            50% { opacity: 0.4; box-shadow: 0 0 2px var(--terminal-green); }
+            50% { opacity: 0.3; box-shadow: 0 0 2px var(--terminal-green); }
             100% { opacity: 1; box-shadow: 0 0 8px var(--terminal-green); }
         }
 
-        /* MAIN */
-        #main-wrapper { flex: 1; display: flex; flex-direction: column; }
+        /* MAIN WRAPPER */
+        #main-wrapper { flex: 1; display: flex; flex-direction: column; overflow: hidden; }
         .top-bar { padding: 15px 40px; border-bottom: 1px solid var(--border-color); display: flex; justify-content: space-between; align-items: center; background: rgba(2, 6, 23, 0.7); backdrop-filter: blur(10px); }
-        .timer-circle { position: relative; width: 32px; height: 32px; transform: rotate(-90deg); }
+
+        .timer-circle { position: relative; width: 32px; height: 32px; transform: rotate(-90deg); display: flex; align-items: center; justify-content: center; }
+        .timer-circle svg { width: 32px; height: 32px; }
         .timer-circle circle { fill: none; stroke-width: 3; stroke: rgba(255,255,255,0.1); }
         .timer-circle .progress { stroke: var(--accent-primary); stroke-dasharray: 88; stroke-dashoffset: 88; transition: stroke-dashoffset 1s linear; }
         #timer-text { position: absolute; transform: rotate(90deg); font-size: 10px; font-weight: bold; color: var(--gold); }
 
         .user-chip { display: flex; align-items: center; gap: 12px; cursor: pointer; padding: 6px 15px; border-radius: 50px; border: 1px solid var(--border-color); background: rgba(255,255,255,0.03); }
 
+        /* CONTENT */
         .content-area { padding: 40px; flex: 1; overflow-y: auto; }
         .card { background: rgba(11, 13, 18, 0.8); padding: 30px; border-radius: 16px; border: 1px solid var(--border-color); max-width: 1000px; margin: auto; }
 
         .module-view { display: none; }
-        .module-view.active { display: block; }
+        .module-view.active { display: block; animation: fadeIn 0.4s ease; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 
-        #chat-window { background:#05070a; border: 1px solid var(--border-color); padding: 20px; border-radius: 12px; height: 380px; overflow-y: auto; font-family: monospace; margin-bottom: 20px; color: #a5b4fc; }
+        /* CHAT & BENCHMARK */
+        #chat-window { background:#05070a; border: 1px solid var(--border-color); padding: 20px; border-radius: 12px; height: 380px; overflow-y: auto; font-family: 'Courier New', monospace; margin-bottom: 20px; color: #a5b4fc; }
         .benchmark-table { width: 100%; border-collapse: collapse; margin-top: 15px; border: 1px solid var(--border-color); font-size: 12px; }
-        .benchmark-table th { background: #12151e; color: var(--accent-primary); padding: 10px; text-align: left; }
+        .benchmark-table th { background: #12151e; color: var(--accent-primary); padding: 10px; text-align: left; text-transform: uppercase; letter-spacing: 1px; }
         .benchmark-table td { padding: 10px; border-bottom: 1px solid var(--border-color); }
-        .terminal-box { background: #000; padding: 15px; border-left: 3px solid var(--accent-primary); font-family: monospace; font-size: 11px; color: var(--terminal-green); height: 180px; overflow-y: auto; }
 
-        .action-btn { padding: 15px; background: linear-gradient(45deg, var(--accent-secondary), var(--accent-primary)); color: white; border: none; border-radius: 8px; cursor: pointer; font-family: 'Cinzel'; font-weight: bold; }
+        /* BOTONES E INPUTS */
+        .input-label { font-size: 10px; color: var(--accent-primary); font-weight: 900; letter-spacing: 1.5px; margin-bottom: 8px; display: block; }
+        input, select, textarea { width: 100%; background: #05070a; border: 1px solid var(--border-color); padding: 14px; color: white; border-radius: 8px; margin-bottom: 20px; font-family: 'Inter', sans-serif; }
+        .action-btn { width: 100%; padding: 18px; background: linear-gradient(45deg, var(--accent-secondary), var(--accent-primary)); color: white; border: none; border-radius: 8px; cursor: pointer; font-family: 'Cinzel'; font-weight: bold; letter-spacing: 2px; }
+
+        .terminal-box { background: #000; padding: 15px; border-left: 3px solid var(--accent-primary); font-family: monospace; font-size: 11px; color: var(--terminal-green); height: 180px; overflow-y: auto; }
     </style>
 </head>
 <body>
@@ -80,19 +90,21 @@
         <span class="material-icons">architecture</span>
         <span class="nav-text">Architect Studio</span>
     </div>
+
     <div class="health-monitor">
-        <p style="font-size: 8px; color: var(--gold); letter-spacing: 1px; margin-bottom: 10px;">VITAL SIGNS</p>
-        <div style="display: flex; flex-direction: column; gap: 8px;">
+        <p style="font-size: 8px; color: var(--gold); letter-spacing: 1px; margin-bottom: 12px; font-weight: 900;">VITAL SIGNS</p>
+        <div style="display: flex; flex-direction: column; gap: 10px;">
             <div style="display: flex; align-items: center; justify-content: space-between;">
-                <span style="font-size: 9px; color: var(--text-dim);">POSTGRES</span>
+                <span style="font-size: 9px; color: var(--text-dim); font-weight: bold;">POSTGRES</span>
                 <div id="led-db" class="led"></div>
             </div>
             <div style="display: flex; align-items: center; justify-content: space-between;">
-                <span style="font-size: 9px; color: var(--text-dim);">N8N ENGINE</span>
+                <span style="font-size: 9px; color: var(--text-dim); font-weight: bold;">N8N ENGINE</span>
                 <div id="led-n8n" class="led"></div>
             </div>
         </div>
     </div>
+
     <div class="nav-item" onclick="window.logout()" style="border-top: 1px solid var(--border-color); margin-top: 10px;">
         <span class="material-icons">logout</span>
         <span class="nav-text">Logout</span>
@@ -101,60 +113,68 @@
 
 <div id="main-wrapper">
     <header class="top-bar">
-        <h2 id="module-title" style="font-family:'Cinzel'; color:var(--accent-primary);">TOKEN LAB</h2>
+        <h2 id="module-title" style="font-family:'Cinzel'; color:var(--accent-primary);">TOKEN LAB :: PERFORMANCE</h2>
         <div style="display: flex; align-items: center; gap: 20px;">
-            <div class="timer-container" style="display: flex; align-items:center; gap:10px;">
-                <div class="timer-circle" style="display: flex; align-items: center; justify-content: center;">
-                    <svg width="32" height="32"><circle cx="16" cy="16" r="14"></circle><circle id="js-progress" class="progress" cx="16" cy="16" r="14"></circle></svg>
-                    <span id="timer-text">60</span>
-                </div>
+            <div class="timer-circle">
+                <svg width="32" height="32"><circle cx="16" cy="16" r="14"></circle><circle id="js-progress" class="progress" cx="16" cy="16" r="14"></circle></svg>
+                <span id="timer-text">60</span>
             </div>
             <div class="user-chip" onclick="window.switchModule('dashboard')">
-                <span id="display-user-name" style="font-weight:bold; font-size:12px;">AGENTE</span>
-                <span class="material-icons">analytics</span>
+                <span id="display-user-name" style="font-weight:bold; font-size:12px; margin-right:5px;">---</span>
+                <span class="material-icons" style="color:var(--accent-primary);">analytics</span>
             </div>
         </div>
     </header>
 
     <main class="content-area">
         <div class="card">
+
             <div id="view-token-lab" class="module-view active">
-                <div id="chat-window">> SISTEMA LISTO. PERSISTENCIA ACTIVA.</div>
+                <div id="chat-window">> SISTEMA LISTO. TELEMETRÍA ACTIVA.</div>
                 <div style="display: flex; gap: 10px;">
-                    <select id="model-select" style="width: 200px; background:#05070a; color:white; border:1px solid var(--border-color); border-radius:8px; padding:10px;">
-                        <option value="all">COMPARE ALL</option>
+                    <select id="model-select" style="width: 250px; margin-bottom: 0;">
+                        <option value="all">COMPARE ALL MODELS</option>
                         <option value="llama3.2:latest">Llama 3.2</option>
                         <option value="codestral:latest">Codestral</option>
                         <option value="mistral-nemo:latest">Mistral Nemo</option>
                     </select>
-                    <input type="text" id="chat-input" style="flex:1; background:#05070a; color:white; border:1px solid var(--border-color); border-radius:8px; padding:10px;" placeholder="Benchmark prompt..." onkeypress="if(event.key==='Enter') window.startAnalysis()">
-                    <button onclick="window.startAnalysis()" class="action-btn" style="width: 120px;">EJECUTAR</button>
+                    <input type="text" id="chat-input" style="flex:1; margin-bottom: 0;" placeholder="Prompt para benchmark..." onkeypress="if(event.key==='Enter') window.startAnalysis()">
+                    <button onclick="window.startAnalysis()" class="action-btn" style="width: 150px; padding: 14px;">EJECUTAR</button>
                 </div>
             </div>
 
             <div id="view-architect" class="module-view">
-                <div style="margin-bottom: 20px;"><label style="font-size:11px; color:var(--accent-primary);">PROYECTO</label><input type="text" id="proj-name"></div>
-                <div style="margin-bottom: 20px;"><label style="font-size:11px; color:var(--accent-primary);">VISIÓN</label><textarea id="proj-vision" style="height:100px; width:100%; background:#05070a; color:white; border:1px solid var(--border-color); border-radius:8px;"></textarea></div>
-                <button class="action-btn" onclick="window.initArchitectFlow()">REFINAR</button>
+                <span class="input-label">PROJECT IDENTIFIER</span>
+                <input type="text" id="proj-name" placeholder="Ej: Sentinel v2.0">
+
+                <span class="input-label">STRATEGIC VISION (PROMPT)</span>
+                <textarea id="proj-vision" style="height: 150px; resize: none;" placeholder="Define los objetivos del Master Builder..."></textarea>
+
+                <button class="action-btn" onclick="window.initArchitectFlow()">INICIAR REFINAMIENTO IMPERIAL</button>
+
+                <div id="arch-status" class="terminal-box" style="display:none; margin-top: 25px;">
+                    <p class="blink">> Conectando con el Orquestador...</p>
+                </div>
             </div>
 
             <div id="view-dashboard" class="module-view">
                 <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; margin-bottom: 25px;">
-                    <div style="background:#05070a; padding:15px; border-radius:12px; border:1px solid var(--border-color); text-align:center;">
+                    <div style="background:#05070a; padding:20px; border-radius:12px; border:1px solid var(--border-color); text-align:center;">
                         <span style="font-size:9px; color:var(--text-dim);">PROYECTOS</span>
-                        <p id="stat-proyectos" style="font-size:24px; color:var(--accent-primary); font-family:'Cinzel';">--</p>
+                        <p id="stat-proyectos" style="font-size:28px; color:var(--accent-primary); font-family:'Cinzel';">--</p>
                     </div>
-                    <div style="background:#05070a; padding:15px; border-radius:12px; border:1px solid var(--border-color); text-align:center;">
+                    <div style="background:#05070a; padding:20px; border-radius:12px; border:1px solid var(--border-color); text-align:center;">
                         <span style="font-size:9px; color:var(--text-dim);">AGENTES</span>
-                        <p id="stat-agentes" style="font-size:24px; color:var(--accent-primary); font-family:'Cinzel';">--</p>
+                        <p id="stat-agentes" style="font-size:28px; color:var(--accent-primary); font-family:'Cinzel';">--</p>
                     </div>
-                    <div style="background:#05070a; padding:15px; border-radius:12px; border:1px solid var(--border-color); text-align:center;">
+                    <div style="background:#05070a; padding:20px; border-radius:12px; border:1px solid var(--border-color); text-align:center;">
                         <span style="font-size:9px; color:var(--text-dim);">FEATURES</span>
-                        <p id="stat-tareas" style="font-size:24px; color:var(--accent-primary); font-family:'Cinzel';">--</p>
+                        <p id="stat-tareas" style="font-size:28px; color:var(--accent-primary); font-family:'Cinzel';">--</p>
                     </div>
                 </div>
                 <div id="log-list" class="terminal-box"></div>
             </div>
+
         </div>
     </main>
 </div>
@@ -179,14 +199,20 @@
     };
 
     async function syncData() {
+        // ACTUALIZAR VITAL SIGNS
         const health = await AurelianCore.getSystemHealth();
+        const dbLed = document.getElementById('led-db');
+        const n8nLed = document.getElementById('led-n8n');
+
         if (health) {
-            const dbLed = document.getElementById('led-db');
-            const n8nLed = document.getElementById('led-n8n');
             dbLed.style.background = health.database === "ONLINE" ? "var(--terminal-green)" : "var(--error-red)";
-            if(health.database === "ONLINE") dbLed.classList.add('blink');
+            if(health.database === "ONLINE") dbLed.classList.add('blink'); else dbLed.classList.remove('blink');
+
             n8nLed.style.background = health.n8n === "ONLINE" ? "var(--terminal-green)" : "var(--error-red)";
-            if(health.n8n === "ONLINE") n8nLed.classList.add('blink');
+            if(health.n8n === "ONLINE") n8nLed.classList.add('blink'); else n8nLed.classList.remove('blink');
+        } else {
+            dbLed.style.background = "#475569"; n8nLed.style.background = "#475569";
+            dbLed.classList.remove('blink'); n8nLed.classList.remove('blink');
         }
 
         const logs = await AurelianCore.getLogs();
@@ -198,14 +224,17 @@
         document.getElementById('stat-tareas').innerText = stats.tareas;
     }
 
-    // EXPORTAR A WINDOW PARA QUE LOS BOTONES FUNCIONEN
+    // EXPORTAR AL SCOPE GLOBAL
     window.switchModule = (mod) => {
         document.querySelectorAll('.module-view').forEach(v => v.classList.remove('active'));
         document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
+
         document.getElementById(`view-${mod}`).classList.add('active');
         if (mod === 'token-lab') document.getElementById('nav-token').classList.add('active');
         if (mod === 'architect') document.getElementById('nav-arch').classList.add('active');
-        document.getElementById('module-title').innerText = mod.toUpperCase().replace('-', ' ');
+
+        const titles = { 'token-lab': 'TOKEN LAB', 'architect': 'ARCHITECT STUDIO', 'dashboard': 'ESTADO IMPERIAL' };
+        document.getElementById('module-title').innerText = titles[mod] + " :: PERFORMANCE";
     };
 
     window.startAnalysis = async () => {
@@ -215,27 +244,40 @@
         const model = document.getElementById('model-select').value;
         const models = model === 'all' ? ['llama3.2:latest', 'mistral-nemo:latest', 'codestral:latest'] : [model];
 
-        win.innerHTML += `<div style="color:var(--gold); margin:10px 0;">> [BENCHMARK]: ${prompt}</div>`;
+        win.innerHTML += `<div style="color:var(--gold); margin:15px 0;">> [BENCHMARK]: ${prompt}</div>`;
         const tableId = `t-${Date.now()}`;
-        win.innerHTML += `<table class="benchmark-table" id="${tableId}"><thead><tr><th>Motor</th><th>t/s</th><th>Latencia</th><th>Estado</th></tr></thead><tbody>${models.map(m => `<tr id="row-${m.replace(/[:.]/g, '-')}"><td>${m}</td><td class="vel">--</td><td class="lat">--</td><td class="st"><span class="running">Wait</span></td></tr>`).join('')}</tbody></table>`;
+        win.innerHTML += `<table class="benchmark-table" id="${tableId}"><thead><tr><th>Motor</th><th>t/s</th><th>Latencia</th><th>Estado</th></tr></thead><tbody>${models.map(m => `<tr id="row-${m.replace(/[:.]/g, '-')}"><td>${m}</td><td class="vel">--</td><td class="lat">--</td><td class="st"><span style="color:var(--text-dim)">Wait</span></td></tr>`).join('')}</tbody></table>`;
         document.getElementById('chat-input').value = "";
 
         for (const m of models) {
             const row = document.querySelector(`#${tableId} #row-${m.replace(/[:.]/g, '-')}`);
-            row.querySelector('.st').innerHTML = `<span class="blink" style="color:var(--gold)">Run</span>`;
+            row.querySelector('.st').innerHTML = `<span class="blink" style="color:var(--gold)">Running</span>`;
             try {
                 const data = await AurelianCore.runBenchmark(prompt, m);
                 row.querySelector('.vel').innerText = data.telemetria.velocidad;
                 row.querySelector('.lat').innerText = data.telemetria.latencia_total;
-                row.querySelector('.st').innerHTML = `<span class="done">Done</span>`;
+                row.querySelector('.st').innerHTML = `<span style="color:var(--terminal-green)">Done</span>`;
             } catch (e) { row.querySelector('.st').innerText = "Fail"; }
         }
         win.scrollTop = win.scrollHeight;
     };
 
     window.initArchitectFlow = async () => {
-        const d = await AurelianCore.initProject(document.getElementById('proj-name').value, document.getElementById('proj-vision').value);
-        if (d.id) alert("Proyecto en Tabularium.");
+        const nombre = document.getElementById('proj-name').value;
+        const vision = document.getElementById('proj-vision').value;
+        const statusBox = document.getElementById('arch-status');
+        if(!nombre || !vision) return alert("Faltan datos imperiales.");
+
+        statusBox.style.display = "block";
+        try {
+            const d = await AurelianCore.initProject(nombre, vision);
+            if (d.id) {
+                statusBox.innerHTML = `<p style="color:var(--terminal-green)">> Proyecto #${d.id} registrado exitosamente en el Tabularium.</p>`;
+                syncData();
+            }
+        } catch (e) {
+            statusBox.innerHTML = `<p style="color:var(--error-red)">> ERROR: Fallo de enlace con el Core.</p>`;
+        }
     };
 
     window.logout = () => { localStorage.removeItem('aurelian_user'); window.location.href = "index.html"; };
