@@ -1,4 +1,4 @@
-const BASE_URL = "http://localhost:8082/api";
+const BASE_URL = "https://ungraphitized-collette-rheumatoidally.ngrok-free.dev/api";
 
 export const AurelianCore = {
     async getSystemHealth() {
