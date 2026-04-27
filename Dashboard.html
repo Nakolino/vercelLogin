@@ -3,9 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AURELIAN :: Command Center</title>
+    <title>AURELIAN AI :: Command Center</title>
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700;900&family=Inter:wght@300;400;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 
     <style>
         :root {
@@ -15,8 +15,9 @@
             --accent-secondary: #4338ca;
             --text-main: #e2e8f0;
             --text-dim: #94a3b8;
-            --border-color: #1e1b4b;
+            --border-color: #1f2533;
             --terminal-green: #4ade80;
+            --gold: #facc15;
         }
 
         * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -30,305 +31,314 @@
             overflow: hidden;
         }
 
-        /* --- SIDEBAR --- */
+        /* --- SIDEBAR DINÁMICA --- */
         .sidebar {
-            width: 260px;
-            background: var(--panel-dark);
+            width: 80px;
+            background-color: var(--panel-dark);
             border-right: 1px solid var(--border-color);
-            display: flex;
-            flex-direction: column;
-            padding: 20px;
+            padding: 20px 0;
+            transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            overflow: hidden;
+            white-space: nowrap;
+            flex-shrink: 0;
+            z-index: 100;
         }
+        .sidebar:hover { width: 260px; }
 
-        .brand {
+        .brand-container {
+            display: flex;
+            align-items: center;
+            padding: 0 20px;
+            margin-bottom: 40px;
+            color: var(--accent-primary);
+        }
+        .brand-name {
             font-family: 'Cinzel', serif;
             font-weight: 900;
-            font-size: 1.5rem;
-            color: var(--accent-primary);
-            margin-bottom: 40px;
-            display: flex;
-            align-items: center;
-            gap: 10px;
+            font-size: 18px;
+            margin-left: 15px;
+            opacity: 0;
+            transition: opacity 0.3s;
+            letter-spacing: 2px;
         }
-
-        .nav-menu { list-style: none; flex-grow: 1; }
+        .sidebar:hover .brand-name { opacity: 1; }
 
         .nav-item {
-            padding: 12px 15px;
-            margin-bottom: 8px;
-            cursor: pointer;
-            border-radius: 8px;
-            transition: 0.3s;
             display: flex;
             align-items: center;
-            gap: 12px;
+            padding: 15px 25px;
+            cursor: pointer;
             color: var(--text-dim);
-            font-size: 0.9rem;
+            transition: 0.2s;
+            border-left: 3px solid transparent;
         }
-
         .nav-item:hover, .nav-item.active {
-            background: rgba(99, 102, 241, 0.1);
-            color: var(--text-main);
-            border-left: 3px solid var(--accent-primary);
+            background-color: rgba(99, 102, 241, 0.1);
+            color: white;
+            border-left-color: var(--accent-primary);
         }
+        .nav-item .material-icons { min-width: 30px; font-size: 24px; }
+        .nav-text { opacity: 0; transition: opacity 0.2s; margin-left: 20px; font-weight: bold; }
+        .sidebar:hover .nav-text { opacity: 1; }
 
-        /* --- MAIN CONTENT --- */
-        .main-content {
-            flex-grow: 1;
+        /* --- CONTENIDO PRINCIPAL --- */
+        #main-wrapper {
+            flex: 1;
             display: flex;
             flex-direction: column;
+            background-image: radial-gradient(circle at top right, #161b2d 0%, #020617 40%);
             overflow-y: auto;
         }
 
         .top-bar {
             padding: 20px 40px;
-            background: rgba(11, 13, 18, 0.5);
-            backdrop-filter: blur(10px);
             border-bottom: 1px solid var(--border-color);
             display: flex;
             justify-content: space-between;
             align-items: center;
+            background: rgba(2, 6, 23, 0.7);
+            backdrop-filter: blur(10px);
         }
 
-        .module-container { padding: 40px; }
+        .content-area { padding: 40px; }
 
-        /* --- UI DEL ARCHITECT STUDIO --- */
-        .architect-ui {
-            max-width: 800px;
-            margin: 0 auto;
-            background: var(--panel-dark);
-            padding: 35px;
+        .card {
+            background: rgba(11, 13, 18, 0.8);
+            backdrop-filter: blur(10px);
+            padding: 30px;
+            border-radius: 16px;
             border: 1px solid var(--border-color);
-            border-radius: 12px;
+            max-width: 1000px;
+            margin: auto;
             box-shadow: 0 10px 30px rgba(0,0,0,0.5);
         }
 
-        .sentinel-header {
-            color: var(--accent-primary);
-            font-family: 'Cinzel', serif;
-            margin-bottom: 30px;
-            border-bottom: 1px solid var(--border-color);
-            padding-bottom: 10px;
-            font-size: 0.8rem;
-            letter-spacing: 2px;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .input-group { margin-bottom: 25px; text-align: left; }
-
-        .input-group label {
-            display: block;
-            color: var(--accent-primary);
-            font-size: 11px;
-            font-weight: 900;
-            margin-bottom: 10px;
-            letter-spacing: 1.5px;
-        }
-
-        .input-group input, .input-group textarea {
-            width: 100%;
-            background: #020617;
-            border: 1px solid var(--border-color);
-            padding: 15px;
-            color: white;
-            border-radius: 8px;
-            font-family: 'Inter', sans-serif;
-            font-size: 1rem;
-            transition: 0.3s;
-        }
-
-        .input-group input:focus, .input-group textarea:focus {
-            border-color: var(--accent-primary);
-            outline: none;
-            box-shadow: 0 0 10px rgba(99, 102, 241, 0.2);
-        }
-
-        .input-group textarea { height: 150px; resize: none; }
-
-        #btn-refine {
-            width: 100%;
-            padding: 18px;
-            background: linear-gradient(45deg, var(--accent-secondary), var(--accent-primary));
-            color: white;
-            border: none;
-            border-radius: 8px;
-            font-family: 'Cinzel', serif;
-            font-weight: 900;
-            cursor: pointer;
-            transition: 0.3s;
-            letter-spacing: 2px;
-        }
-
-        #btn-refine:hover { transform: translateY(-2px); box-shadow: 0 5px 20px rgba(99, 102, 241, 0.4); }
-        #btn-refine:disabled { opacity: 0.5; cursor: not-allowed; }
-
-        .terminal-box {
-            margin-top: 30px;
-            background: #020617;
+        /* --- TOKEN LAB UI --- */
+        #chat-window {
+            height: 400px;
+            background: #05070a;
+            border-radius: 12px;
             padding: 20px;
-            border-left: 3px solid var(--terminal-green);
+            overflow-y: auto;
+            border: 1px solid var(--border-color);
             font-family: 'Courier New', monospace;
             font-size: 13px;
-            text-align: left;
-            line-height: 1.6;
+            color: #a5b4fc;
+            margin-bottom: 20px;
         }
+        .msg { margin-bottom: 12px; padding: 12px 16px; border-radius: 8px; line-height: 1.5; }
+        .msg.user { background: #1f2533; border: 1px solid #2d3748; color: white; margin-left: 20px; }
+        .msg.bot { background: #0b0d12; border: 1px solid var(--accent-primary); width: 100%; }
 
+        .rank-table { width: 100%; border-collapse: collapse; margin-top: 15px; background: #000; border: 1px solid var(--accent-secondary); }
+        .rank-table th { background: #12151e; color: var(--accent-primary); text-align: left; padding: 10px; font-size: 10px; text-transform: uppercase; border-bottom: 2px solid var(--accent-secondary); }
+        .rank-table td { padding: 10px; border-bottom: 1px solid #1f2533; font-size: 12px; }
+        .rank-first { color: var(--gold); font-weight: 900; background: rgba(250, 204, 21, 0.05); }
+
+        /* --- ARCHITECT STUDIO UI --- */
+        .architect-ui { text-align: center; }
+        .input-group { margin-bottom: 20px; text-align: left; }
+        .input-group label { display: block; color: var(--accent-primary); font-size: 11px; font-weight: 900; margin-bottom: 8px; letter-spacing: 1px; }
+        .input-group input, .input-group textarea, select, input#chat-input {
+            width: 100%; background: #05070a; border: 1px solid var(--border-color); padding: 14px; color: white; border-radius: 8px; font-family: 'Inter', sans-serif;
+        }
+        .input-group textarea { height: 120px; resize: none; }
+
+        .action-btn {
+            width: 100%; padding: 16px; background: linear-gradient(45deg, var(--accent-secondary), var(--accent-primary)); color: white; border: none; border-radius: 8px; font-family: 'Cinzel', serif; font-weight: 900; cursor: pointer; transition: 0.3s; letter-spacing: 2px;
+        }
+        .action-btn:hover { transform: translateY(-2px); box-shadow: 0 5px 20px rgba(99, 102, 241, 0.4); }
+
+        .terminal-box { margin-top: 20px; background: #000; padding: 15px; border-left: 3px solid var(--terminal-green); font-family: 'Courier New', monospace; font-size: 12px; text-align: left; }
         .blink { animation: blinker 1s linear infinite; }
         @keyframes blinker { 50% { opacity: 0; } }
-
-        /* Estilo para el Dashboard principal */
-        .stat-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
-        .stat-card { background: var(--panel-dark); padding: 25px; border-radius: 12px; border: 1px solid var(--border-color); }
-        .stat-card h3 { color: var(--text-dim); font-size: 0.8rem; margin-bottom: 10px; }
-        .stat-card p { font-size: 2rem; font-weight: bold; color: var(--accent-primary); }
     </style>
 </head>
 <body>
 
 <aside class="sidebar">
-    <div class="brand">
-        <i class="fas fa-crown"></i>
-        AURELIAN
+    <div class="brand-container">
+        <span class="material-icons" style="font-size: 32px;">shield</span>
+        <span class="brand-name">AURELIAN AI</span>
     </div>
-    <ul class="nav-menu">
-        <li class="nav-item active" onclick="loadModule('dashboard')">
-            <i class="fas fa-chart-line"></i> Dashboard
-        </li>
-        <li class="nav-item" onclick="loadModule('architect')">
-            <i class="fas fa-compass-drafting"></i> Architect Studio
-        </li>
-        <li class="nav-item" onclick="loadModule('agents')">
-            <i class="fas fa-robot"></i> Legio AI
-        </li>
-        <li class="nav-item" onclick="loadModule('settings')">
-            <i class="fas fa-cog"></i> Configuración
-        </li>
-    </ul>
+    <div class="nav-item active" id="nav-token" onclick="loadModule('token-lab')">
+        <span class="material-icons">calculate</span>
+        <span class="nav-text">Token Lab</span>
+    </div>
+    <div class="nav-item" id="nav-architect" onclick="loadModule('architect')">
+        <span class="material-icons">architecture</span>
+        <span class="nav-text">Architect Studio</span>
+    </div>
+    <div class="nav-item">
+        <span class="material-icons">hub</span>
+        <span class="nav-text">Legio Agents</span>
+    </div>
 </aside>
 
-<main class="main-content">
+<div id="main-wrapper">
     <header class="top-bar">
-        <h2 id="module-title" style="font-family: 'Cinzel', serif;">CENTRO DE MANDO</h2>
-        <div class="user-profile">
-            <span style="font-size: 0.8rem; color: var(--text-dim);">PROJECT LEAD :: </span>
-            <span style="font-weight: bold;">IÑAKI</span>
-        </div>
+        <h2 id="module-title" style="font-family: 'Cinzel', serif; letter-spacing: 2px; color: var(--accent-primary);">AURELIAN CORE</h2>
+        <div style="font-size: 12px; color: var(--text-dim);">SYSTEM STATUS: <span style="color: var(--terminal-green);">ONLINE</span></div>
     </header>
 
-    <section id="module-body" class="module-container">
-    </section>
-</main>
+    <main class="content-area">
+        <div class="card">
+            <div id="module-body">
+            </div>
+        </div>
+    </main>
+</div>
 
 <script>
-    // Inicializar el Dashboard al cargar
-    window.onload = () => loadModule('dashboard');
+    // URLs de conexión
+    const TOKEN_URL = "https://ungraphitized-collette-rheumatoidally.ngrok-free.dev/api/tokens/analizar";
+    const ARCHITECT_URL = "http://localhost:8082/api/projects/init";
+
+    window.onload = () => loadModule('token-lab');
 
     function loadModule(module) {
         const body = document.getElementById('module-body');
         const title = document.getElementById('module-title');
 
-        // Actualizar navegación visual
-        document.querySelectorAll('.nav-item').forEach(item => item.classList.remove('active'));
-        event?.currentTarget?.classList?.add('active');
+        // Update nav UI
+        document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
 
-        if (module === 'dashboard') {
-            title.innerText = "ESTADO DE LA LEGIÓN";
+        if (module === 'token-lab') {
+            document.getElementById('nav-token').classList.add('active');
+            title.innerText = "TOKEN LAB :: PERFORMANCE PROFILER";
             body.innerHTML = `
-                    <div class="stat-grid">
-                        <div class="stat-card"><h3>PROYECTOS ACTIVOS</h3><p>0</p></div>
-                        <div class="stat-card"><h3>AGENTES EN LÍNEA</h3><p>2</p></div>
-                        <div class="stat-card"><h3>TAREAS COMPLETADAS</h3><p>12</p></div>
-                    </div>
-                    <div style="margin-top: 40px; padding: 20px; border: 1px dashed var(--border-color); text-align: center;">
-                        <p style="color: var(--text-dim);">No hay eventos recientes en el Tabularium.</p>
-                    </div>
-                `;
+                <div id="chat-window">PROTOCOLO LISTO. Seleccione objetivo de análisis para iniciar Benchmark.</div>
+                <div style="display: flex; align-items: center; gap: 15px; margin-bottom: 15px;">
+                    <label style="font-size: 11px; color: var(--text-dim); font-weight: 800;">TARGET ENGINE:</label>
+                    <select id="model-select" style="width: auto; flex: 1;">
+                        <option value="all">TEST_ALL (Comparativa Completa)</option>
+                        <option value="llama3.2:latest">Llama 3.2 (2.0 GB)</option>
+                        <option value="codestral:latest">Codestral (12 GB)</option>
+                        <option value="mistral-nemo:latest">Mistral Nemo (7.1 GB)</option>
+                    </select>
+                </div>
+                <div style="display: flex; gap: 10px;">
+                    <input type="text" id="chat-input" placeholder="Escribe el prompt de estrés..." onkeypress="if(event.key==='Enter') startAnalysis()">
+                    <button class="action-btn" style="width: 180px;" onclick="startAnalysis()">EJECUTAR</button>
+                </div>`;
         }
 
         if (module === 'architect') {
+            document.getElementById('nav-architect').classList.add('active');
             title.innerText = "ARCHITECT STUDIO :: SENTINEL V1.0";
             body.innerHTML = `
-                    <div class="architect-ui">
-                        <div class="sentinel-header">
-                            <i class="fas fa-microchip"></i>
-                            <span>SISTEMA DE ANÁLISIS DE VISIÓN ACTIVO</span>
-                        </div>
-
-                        <div class="input-group">
-                            <label>NOMBRE DEL PROYECTO (TABULARIUM ID)</label>
-                            <input type="text" id="proj-name" placeholder="Ej: Operacion Aureliano..." autocomplete="off">
-                        </div>
-
-                        <div class="input-group">
-                            <label>VISIÓN TÉCNICA (DESGLOSE PARA EL SENTINEL)</label>
-                            <textarea id="proj-vision" placeholder="Describe tu idea técnica. El Sentinel desglosará las features automáticamente..."></textarea>
-                        </div>
-
-                        <button id="btn-refine" onclick="initArchitectFlow()">
-                            <i class="fas fa-scroll"></i> INICIAR REFINAMIENTO IMPERIAL
-                        </button>
-
-                        <div id="terminal-output" class="terminal-box" style="display:none;">
-                            <p>> [SISTEMA]: Conectando con el Core 8082...</p>
-                            <p id="status-line" class="blink"></p>
-                        </div>
+                <div class="architect-ui">
+                    <div class="input-group">
+                        <label>NOMBRE DEL PROYECTO</label>
+                        <input type="text" id="proj-name" placeholder="Ej: Operacion Aureliano..." autocomplete="off">
                     </div>
-                `;
-        }
-
-        if (module === 'agents') {
-            title.innerText = "LEGIO AI :: AGENTES";
-            body.innerHTML = `<p style="color: var(--text-dim);">Módulo en desarrollo. Los agentes están en los cuarteles.</p>`;
+                    <div class="input-group">
+                        <label>VISIÓN ESTRATÉGICA (DESGLOSE DE FEATURES)</label>
+                        <textarea id="proj-vision" placeholder="Describe la visión técnica para que el Sentinel genere el desglose..."></textarea>
+                    </div>
+                    <button id="btn-refine" class="action-btn" onclick="initArchitectFlow()">
+                        INICIAR REFINAMIENTO IMPERIAL
+                    </button>
+                    <div id="terminal-output" class="terminal-box" style="display:none;">
+                        <p>> [SYSTEM]: Conectando con el Tabularium (Puerto 8082)...</p>
+                        <p id="status-line" class="blink"></p>
+                    </div>
+                </div>`;
         }
     }
 
+    // --- LÓGICA TOKEN LAB ---
+    async function startAnalysis() {
+        const input = document.getElementById('chat-input');
+        const modelSelect = document.getElementById('model-select');
+        const win = document.getElementById('chat-window');
+        const prompt = input.value.trim();
+        if(!prompt) return;
+
+        win.innerHTML = `<div class="msg user">> [STRESS_TEST_INIT] ${prompt}</div>`;
+        input.value = "";
+
+        const models = modelSelect.value === 'all'
+            ? ['llama3.2:latest', 'mistral-nemo:latest', 'codestral:latest']
+            : [modelSelect.value];
+
+        let results = [];
+        for (const model of models) {
+            const id = `status-${model.replace(/[:.]/g, '-')}`;
+            win.innerHTML += `<div id="${id}" style="color: var(--text-dim); font-size: 11px; margin-bottom: 5px;">> Analizando en ${model}...</div>`;
+            win.scrollTop = win.scrollHeight;
+
+            try {
+                const resp = await fetch(TOKEN_URL, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json', 'ngrok-skip-browser-warning': 'true' },
+                    body: JSON.stringify({ prompt, model })
+                });
+                if (resp.ok) {
+                    const data = await resp.json();
+                    const t = data.telemetria || {};
+                    results.push({
+                        model,
+                        speed: t.velocidad || '0 t/s',
+                        speedNum: parseFloat(t.velocidad) || 0,
+                        latency: t.latencia_total || '0s',
+                        promptTokens: t.tokens_entrada || 0
+                    });
+                    document.getElementById(id).innerHTML = `<span style="color: var(--terminal-green);">> [OK] ${model} finalizado.</span>`;
+                }
+            } catch (e) {
+                document.getElementById(id).innerHTML = `<span style="color: #f87171;">> [FAIL] ${model} inaccesible.</span>`;
+            }
+        }
+        if(results.length > 0) renderComparison(results, win);
+    }
+
+    function renderComparison(results, win) {
+        results.sort((a, b) => b.speedNum - a.speedNum);
+        let table = `
+            <div class="msg bot">
+                <b style="color: var(--gold);">CORE::BENCHMARK_COMPLETE</b>
+                <table class="rank-table">
+                    <thead><tr><th>RANK</th><th>ENGINE</th><th>TOKENS</th><th>SPEED</th><th>LATENCY</th></tr></thead>
+                    <tbody>`;
+        results.forEach((res, i) => {
+            table += `<tr ${i===0 ? 'class="rank-first"' : ''}>
+                <td>#${i+1}</td><td>${res.model}</td><td>${res.promptTokens}</td><td>${res.speed}</td><td>${res.latency}</td>
+            </tr>`;
+        });
+        table += `</tbody></table></div>`;
+        win.innerHTML += table;
+        win.scrollTop = win.scrollHeight;
+    }
+
+    // --- LÓGICA ARCHITECT STUDIO ---
     async function initArchitectFlow() {
         const nombre = document.getElementById('proj-name').value;
         const vision = document.getElementById('proj-vision').value;
-        const terminal = document.getElementById('terminal-output');
         const statusLine = document.getElementById('status-line');
         const btn = document.getElementById('btn-refine');
 
-        if (!nombre || !vision) {
-            alert("Emperador, el Sentinel requiere datos para procesar.");
-            return;
-        }
+        if(!nombre || !vision) return alert("Emperador, defina nombre y visión.");
 
-        // Feedback Visual
         btn.disabled = true;
-        btn.innerHTML = "<i class='fas fa-spinner fa-spin'></i> TRANSMITIENDO...";
-        terminal.style.display = "block";
-        statusLine.innerText = "> [INFO]: Sanitizando y enviando al Tabularium...";
+        btn.innerText = "TRANSMITIENDO...";
+        document.getElementById('terminal-output').style.display = "block";
+        statusLine.innerText = "> [INFO]: Sanitizando datos y enviando al Core...";
 
         try {
-            // Llamada al Backend de Spring Boot
-            const response = await fetch("http://localhost:8082/api/projects/init", {
+            const resp = await fetch(ARCHITECT_URL, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ nombre: nombre, vision: vision })
+                body: JSON.stringify({ nombre, vision })
             });
-
-            if (response.ok) {
-                const data = await response.json();
-                statusLine.innerHTML = `
-                        <span style="color: #4ade80;">> [OK]: Proyecto #${data.id} guardado con éxito.</span><br>
-                        <span style="color: #a5b4fc;">> [WAIT]: Master Builder invocado en n8n...</span>
-                    `;
-
-                // Resetear botón después de éxito
-                setTimeout(() => {
-                    btn.disabled = false;
-                    btn.innerHTML = "<i class='fas fa-scroll'></i> INICIAR REFINAMIENTO IMPERIAL";
-                }, 4000);
-            } else {
-                throw new Error("Error en el servidor");
+            if(resp.ok) {
+                const data = await resp.json();
+                statusLine.innerHTML = `<span style="color: var(--terminal-green);">> [OK]: Proyecto #${data.id} en el Tabularium.</span><br>> [WAIT]: Master Builder invocado en n8n...`;
             }
-        } catch (error) {
-            statusLine.innerHTML = `<span style="color: #f87171;">> [ERROR]: No se pudo contactar con el Backend (Puerto 8082).</span>`;
-            btn.disabled = false;
-            btn.innerText = "REINTENTAR INVOCACIÓN";
+        } catch (e) {
+            statusLine.innerHTML = `<span style="color: #f87171;">> [ERROR]: Backend fuera de línea.</span>`;
+        } finally {
+            setTimeout(() => { btn.disabled = false; btn.innerText = "INICIAR REFINAMIENTO IMPERIAL"; }, 3000);
         }
     }
 </script>
