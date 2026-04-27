@@ -10,13 +10,15 @@
     <style>
         :root {
             --bg-dark: #020617; --panel-dark: #0b0d12; --accent-primary: #6366f1;
-            --text-main: #e2e8f0; --text-dim: #94a3b8; --border-color: #1f2533;
-            --terminal-green: #4ade80; --gold: #facc15; --error-red: #ef4444;
+            --accent-secondary: #4338ca; --text-main: #e2e8f0; --text-dim: #94a3b8;
+            --border-color: #1f2533; --terminal-green: #4ade80; --gold: #facc15;
+            --error-red: #ef4444;
         }
+
         * { box-sizing: border-box; margin: 0; padding: 0; }
         body { font-family: 'Inter', sans-serif; background-color: var(--bg-dark); color: var(--text-main); display: flex; height: 100vh; overflow: hidden; }
 
-        /* SIDEBAR */
+        /* --- SIDEBAR --- */
         .sidebar { width: 80px; background-color: var(--panel-dark); border-right: 1px solid var(--border-color); padding: 20px 0; transition: width 0.3s; overflow: hidden; display: flex; flex-direction: column; z-index: 100; }
         .sidebar:hover { width: 260px; }
         .brand-container { display: flex; align-items: center; padding: 0 20px; margin-bottom: 40px; color: var(--accent-primary); cursor: pointer; }
@@ -24,16 +26,16 @@
         .sidebar:hover .brand-name { opacity: 1; }
 
         .nav-item { display: flex; align-items: center; padding: 15px 25px; cursor: pointer; color: var(--text-dim); border-left: 3px solid transparent; transition: 0.2s; }
-        .nav-item.active { background-color: rgba(99, 102, 241, 0.1); color: white; border-left-color: var(--accent-primary); }
-        .nav-item .material-icons { min-width: 30px; }
+        .nav-item:hover, .nav-item.active { background-color: rgba(99, 102, 241, 0.1); color: white; border-left-color: var(--accent-primary); }
+        .nav-item .material-icons { min-width: 30px; font-size: 24px; }
         .nav-text { opacity: 0; transition: 0.2s; margin-left: 20px; font-weight: bold; }
         .sidebar:hover .nav-text { opacity: 1; }
 
-        /* VITAL SIGNS (LEDs) */
-        .health-monitor { padding: 15px; border-top: 1px solid var(--border-color); margin-top: auto; opacity: 0; transition: 0.3s; }
+        /* VITAL SIGNS */
+        .health-monitor { padding: 20px; border-top: 1px solid var(--border-color); margin-top: auto; opacity: 0; transition: 0.3s; }
         .sidebar:hover .health-monitor { opacity: 1; }
-        .led { width: 8px; height: 8px; border-radius: 50%; background: #475569; transition: background 0.5s ease; }
-
+        .led-row { display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px; }
+        .led { width: 8px; height: 8px; border-radius: 50%; background: #475569; transition: background 0.5s; }
         .blink { animation: led-pulse 2s infinite; }
         @keyframes led-pulse {
             0% { opacity: 1; box-shadow: 0 0 8px var(--terminal-green); }
@@ -41,19 +43,18 @@
             100% { opacity: 1; box-shadow: 0 0 8px var(--terminal-green); }
         }
 
-        /* MAIN WRAPPER */
+        /* --- MAIN WRAPPER --- */
         #main-wrapper { flex: 1; display: flex; flex-direction: column; overflow: hidden; }
         .top-bar { padding: 15px 40px; border-bottom: 1px solid var(--border-color); display: flex; justify-content: space-between; align-items: center; background: rgba(2, 6, 23, 0.7); backdrop-filter: blur(10px); }
 
         .timer-circle { position: relative; width: 32px; height: 32px; transform: rotate(-90deg); display: flex; align-items: center; justify-content: center; }
-        .timer-circle svg { width: 32px; height: 32px; }
         .timer-circle circle { fill: none; stroke-width: 3; stroke: rgba(255,255,255,0.1); }
         .timer-circle .progress { stroke: var(--accent-primary); stroke-dasharray: 88; stroke-dashoffset: 88; transition: stroke-dashoffset 1s linear; }
         #timer-text { position: absolute; transform: rotate(90deg); font-size: 10px; font-weight: bold; color: var(--gold); }
 
         .user-chip { display: flex; align-items: center; gap: 12px; cursor: pointer; padding: 6px 15px; border-radius: 50px; border: 1px solid var(--border-color); background: rgba(255,255,255,0.03); }
 
-        /* CONTENT */
+        /* --- CONTENT --- */
         .content-area { padding: 40px; flex: 1; overflow-y: auto; }
         .card { background: rgba(11, 13, 18, 0.8); padding: 30px; border-radius: 16px; border: 1px solid var(--border-color); max-width: 1000px; margin: auto; }
 
@@ -65,11 +66,11 @@
         #chat-window { background:#05070a; border: 1px solid var(--border-color); padding: 20px; border-radius: 12px; height: 380px; overflow-y: auto; font-family: 'Courier New', monospace; margin-bottom: 20px; color: #a5b4fc; }
         .benchmark-table { width: 100%; border-collapse: collapse; margin-top: 15px; border: 1px solid var(--border-color); font-size: 12px; }
         .benchmark-table th { background: #12151e; color: var(--accent-primary); padding: 10px; text-align: left; text-transform: uppercase; letter-spacing: 1px; }
-        .benchmark-table td { padding: 10px; border-bottom: 1px solid var(--border-color); }
+        .benchmark-table td { padding: 12px; border-bottom: 1px solid var(--border-color); }
 
-        /* BOTONES E INPUTS */
-        .input-label { font-size: 10px; color: var(--accent-primary); font-weight: 900; letter-spacing: 1.5px; margin-bottom: 8px; display: block; }
-        input, select, textarea { width: 100%; background: #05070a; border: 1px solid var(--border-color); padding: 14px; color: white; border-radius: 8px; margin-bottom: 20px; font-family: 'Inter', sans-serif; }
+        /* UI ELEMENTS */
+        .input-label { font-size: 10px; color: var(--accent-primary); font-weight: 900; letter-spacing: 1.5px; display: block; margin-bottom: 8px; font-family: 'Inter'; }
+        input, select, textarea { width: 100%; background: #05070a; border: 1px solid var(--border-color); padding: 14px; color: white; border-radius: 8px; margin-bottom: 20px; font-family: 'Inter'; }
         .action-btn { width: 100%; padding: 18px; background: linear-gradient(45deg, var(--accent-secondary), var(--accent-primary)); color: white; border: none; border-radius: 8px; cursor: pointer; font-family: 'Cinzel'; font-weight: bold; letter-spacing: 2px; }
 
         .terminal-box { background: #000; padding: 15px; border-left: 3px solid var(--accent-primary); font-family: monospace; font-size: 11px; color: var(--terminal-green); height: 180px; overflow-y: auto; }
@@ -93,15 +94,13 @@
 
     <div class="health-monitor">
         <p style="font-size: 8px; color: var(--gold); letter-spacing: 1px; margin-bottom: 12px; font-weight: 900;">VITAL SIGNS</p>
-        <div style="display: flex; flex-direction: column; gap: 10px;">
-            <div style="display: flex; align-items: center; justify-content: space-between;">
-                <span style="font-size: 9px; color: var(--text-dim); font-weight: bold;">POSTGRES</span>
-                <div id="led-db" class="led"></div>
-            </div>
-            <div style="display: flex; align-items: center; justify-content: space-between;">
-                <span style="font-size: 9px; color: var(--text-dim); font-weight: bold;">N8N ENGINE</span>
-                <div id="led-n8n" class="led"></div>
-            </div>
+        <div class="led-row">
+            <span style="font-size: 9px; color: var(--text-dim); font-weight: bold;">POSTGRES</span>
+            <div id="led-db" class="led"></div>
+        </div>
+        <div class="led-row">
+            <span style="font-size: 9px; color: var(--text-dim); font-weight: bold;">N8N ENGINE</span>
+            <div id="led-n8n" class="led"></div>
         </div>
     </div>
 
@@ -130,7 +129,7 @@
         <div class="card">
 
             <div id="view-token-lab" class="module-view active">
-                <div id="chat-window">> SISTEMA LISTO. TELEMETRÍA ACTIVA.</div>
+                <div id="chat-window">> SISTEMA LISTO. PERSISTENCIA ACTIVA.</div>
                 <div style="display: flex; gap: 10px;">
                     <select id="model-select" style="width: 250px; margin-bottom: 0;">
                         <option value="all">COMPARE ALL MODELS</option>
@@ -145,7 +144,7 @@
 
             <div id="view-architect" class="module-view">
                 <span class="input-label">PROJECT IDENTIFIER</span>
-                <input type="text" id="proj-name" placeholder="Ej: Sentinel v2.0">
+                <input type="text" id="proj-name" placeholder="Nombre único para el Tabularium...">
 
                 <span class="input-label">STRATEGIC VISION (PROMPT)</span>
                 <textarea id="proj-vision" style="height: 150px; resize: none;" placeholder="Define los objetivos del Master Builder..."></textarea>
@@ -199,7 +198,7 @@
     };
 
     async function syncData() {
-        // ACTUALIZAR VITAL SIGNS
+        // ACTUALIZAR VITAL SIGNS (SALUD)
         const health = await AurelianCore.getSystemHealth();
         const dbLed = document.getElementById('led-db');
         const n8nLed = document.getElementById('led-n8n');
@@ -224,7 +223,8 @@
         document.getElementById('stat-tareas').innerText = stats.tareas;
     }
 
-    // EXPORTAR AL SCOPE GLOBAL
+    // --- FUNCIONES GLOBALES PARA EL HTML (Scope fix) ---
+
     window.switchModule = (mod) => {
         document.querySelectorAll('.module-view').forEach(v => v.classList.remove('active'));
         document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
@@ -241,22 +241,25 @@
         const win = document.getElementById('chat-window');
         const prompt = document.getElementById('chat-input').value.trim();
         if (!prompt) return;
-        const model = document.getElementById('model-select').value;
-        const models = model === 'all' ? ['llama3.2:latest', 'mistral-nemo:latest', 'codestral:latest'] : [model];
+        const modelVal = document.getElementById('model-select').value;
+        const models = modelVal === 'all' ? ['llama3.2:latest', 'mistral-nemo:latest', 'codestral:latest'] : [modelVal];
 
         win.innerHTML += `<div style="color:var(--gold); margin:15px 0;">> [BENCHMARK]: ${prompt}</div>`;
         const tableId = `t-${Date.now()}`;
         win.innerHTML += `<table class="benchmark-table" id="${tableId}"><thead><tr><th>Motor</th><th>t/s</th><th>Latencia</th><th>Estado</th></tr></thead><tbody>${models.map(m => `<tr id="row-${m.replace(/[:.]/g, '-')}"><td>${m}</td><td class="vel">--</td><td class="lat">--</td><td class="st"><span style="color:var(--text-dim)">Wait</span></td></tr>`).join('')}</tbody></table>`;
         document.getElementById('chat-input').value = "";
+        win.scrollTop = win.scrollHeight;
 
         for (const m of models) {
             const row = document.querySelector(`#${tableId} #row-${m.replace(/[:.]/g, '-')}`);
             row.querySelector('.st').innerHTML = `<span class="blink" style="color:var(--gold)">Running</span>`;
             try {
                 const data = await AurelianCore.runBenchmark(prompt, m);
-                row.querySelector('.vel').innerText = data.telemetria.velocidad;
-                row.querySelector('.lat').innerText = data.telemetria.latencia_total;
-                row.querySelector('.st').innerHTML = `<span style="color:var(--terminal-green)">Done</span>`;
+                if(data.telemetria) {
+                    row.querySelector('.vel').innerText = data.telemetria.velocidad;
+                    row.querySelector('.lat').innerText = data.telemetria.latencia_total;
+                    row.querySelector('.st').innerHTML = `<span style="color:var(--terminal-green)">Done</span>`;
+                }
             } catch (e) { row.querySelector('.st').innerText = "Fail"; }
         }
         win.scrollTop = win.scrollHeight;
@@ -272,7 +275,7 @@
         try {
             const d = await AurelianCore.initProject(nombre, vision);
             if (d.id) {
-                statusBox.innerHTML = `<p style="color:var(--terminal-green)">> Proyecto #${d.id} registrado exitosamente en el Tabularium.</p>`;
+                statusBox.innerHTML = `<p style="color:var(--terminal-green)">> [OK]: Proyecto #${d.id} registrado exitosamente.</p>`;
                 syncData();
             }
         } catch (e) {
@@ -281,6 +284,7 @@
     };
 
     window.logout = () => { localStorage.removeItem('aurelian_user'); window.location.href = "index.html"; };
+
 </script>
 </body>
 </html>
