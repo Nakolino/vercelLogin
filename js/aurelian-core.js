@@ -1,44 +1,43 @@
 /**
  * AURELIAN CORE API - Módulo de Comunicación Central
- * Maneja la lógica de red y telemetría del sistema.
+ * Centraliza las peticiones al Core de Spring Boot (8082)
  */
 const BASE_URL = "http://localhost:8082/api";
 
 export const AurelianCore = {
-    // Obtener los logs de actividad del Centinela
+    // Obtener los logs de actividad (Anti-cache habilitado)
     async getLogs() {
         try {
-            const resp = await fetch(`${BASE_URL}/agentes/logs`);
+            const resp = await fetch(`${BASE_URL}/agentes/logs?t=${new Date().getTime()}`);
             return resp.ok ? await resp.json() : [];
         } catch (e) {
-            console.error("Error al conectar con LogService:", e);
-            return [];
+            console.error("Fallo de conexión con LogService");
+            return ["> [ERROR]: El Centinela de Logs no responde."];
         }
     },
 
-    // Obtener las estadísticas globales del Tabularium
+    // Obtener estadísticas del Tabularium
     async getStats() {
         try {
             const resp = await fetch(`${BASE_URL}/projects/stats`);
-            return resp.ok ? await resp.json() : null;
+            return resp.ok ? await resp.json() : { proyectos: 0, agentes: 0, tareas: 0 };
         } catch (e) {
-            console.error("Error al conectar con ProjectService:", e);
             return null;
         }
     },
 
-    // Ejecutar Benchmark de estrés (Token Lab)
+    // Ejecutar Benchmark (Dispara log en el backend automáticamente)
     async runBenchmark(prompt, model) {
         const resp = await fetch(`${BASE_URL}/tokens/analizar`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ prompt, model })
         });
-        if (!resp.ok) throw new Error("Fallo en la respuesta del motor AI");
+        if (!resp.ok) throw new Error("Motor AI fuera de línea");
         return await resp.json();
     },
 
-    // Iniciar flujo del Architect Studio (Sentinel)
+    // Crear Proyecto en el Architect Studio
     async initProject(nombre, vision) {
         const resp = await fetch(`${BASE_URL}/projects/init`, {
             method: 'POST',

@@ -18,6 +18,7 @@
             --border-color: #1f2533;
             --terminal-green: #4ade80;
             --gold: #facc15;
+            --error-red: #f87171;
         }
 
         * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -26,7 +27,6 @@
         /* --- SIDEBAR --- */
         .sidebar { width: 80px; background-color: var(--panel-dark); border-right: 1px solid var(--border-color); padding: 20px 0; transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1); overflow: hidden; white-space: nowrap; flex-shrink: 0; z-index: 100; }
         .sidebar:hover { width: 260px; }
-
         .brand-container { display: flex; align-items: center; padding: 0 20px; margin-bottom: 40px; color: var(--accent-primary); cursor: pointer; transition: 0.3s; }
         .brand-name { font-family: 'Cinzel', serif; font-weight: 900; font-size: 18px; margin-left: 15px; opacity: 0; transition: opacity 0.3s; letter-spacing: 2px; }
         .sidebar:hover .brand-name { opacity: 1; }
@@ -37,42 +37,47 @@
         .nav-text { opacity: 0; transition: opacity 0.2s; margin-left: 20px; font-weight: bold; }
         .sidebar:hover .nav-text { opacity: 1; }
 
-        /* --- TOP BAR --- */
+        /* --- TOP BAR & TIMER --- */
         #main-wrapper { flex: 1; display: flex; flex-direction: column; background-image: radial-gradient(circle at top right, #161b2d 0%, #020617 40%); overflow: hidden; }
         .top-bar { padding: 15px 40px; border-bottom: 1px solid var(--border-color); display: flex; justify-content: space-between; align-items: center; background: rgba(2, 6, 23, 0.7); backdrop-filter: blur(10px); }
 
-        .user-profile-top { display: flex; align-items: center; gap: 12px; background: rgba(255, 255, 255, 0.03); padding: 8px 15px; border-radius: 50px; border: 1px solid var(--border-color); }
-        .user-avatar { width: 32px; height: 32px; background: var(--accent-secondary); border-radius: 50%; display: flex; justify-content: center; align-items: center; color: white; font-size: 18px; }
-        .user-info { display: flex; flex-direction: column; }
-        .user-label { font-size: 9px; color: var(--text-dim); text-transform: uppercase; font-weight: bold; }
-        .user-name { font-size: 13px; font-weight: 700; color: var(--text-main); }
+        .monitor-tools { display: flex; align-items: center; gap: 20px; }
+        .refresh-container { display: flex; align-items: center; gap: 10px; background: rgba(255,255,255,0.03); padding: 5px 15px; border-radius: 50px; border: 1px solid var(--border-color); }
+        .timer-circle { position: relative; width: 32px; height: 32px; }
+        .timer-circle svg { transform: rotate(-90deg); width: 32px; height: 32px; }
+        .timer-circle circle { fill: none; stroke-width: 3; stroke: rgba(255,255,255,0.1); }
+        .timer-circle .progress { stroke: var(--accent-primary); stroke-dasharray: 88; stroke-dashoffset: 88; transition: stroke-dashoffset 1s linear; }
+        #timer-text { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); font-size: 10px; font-weight: bold; color: var(--gold); }
 
-        /* --- CONTENT --- */
+        .user-profile-top { display: flex; align-items: center; gap: 12px; }
+        .user-avatar { width: 32px; height: 32px; background: var(--accent-secondary); border-radius: 50%; display: flex; justify-content: center; align-items: center; color: white; }
+        .user-name { font-size: 13px; font-weight: 700; }
+
+        /* --- CONTENT & CARDS --- */
         .content-area { padding: 40px; flex: 1; overflow-y: auto; }
         .card { background: rgba(11, 13, 18, 0.8); backdrop-filter: blur(10px); padding: 30px; border-radius: 16px; border: 1px solid var(--border-color); max-width: 1000px; margin: auto; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
-
         .module-view { display: none; }
         .module-view.active { display: block; animation: fadeIn 0.4s ease; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
-        /* --- STATS --- */
+        /* --- OVERVIEW --- */
         .stat-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 25px; margin-bottom: 35px; }
-        .stat-card { background: #05070a; padding: 30px; border-radius: 14px; border: 1px solid var(--border-color); text-align: center; }
-        .stat-card p { font-size: 2.8rem; font-weight: 900; color: var(--accent-primary); font-family: 'Cinzel', serif; }
+        .stat-card { background: #05070a; padding: 25px; border-radius: 14px; border: 1px solid var(--border-color); text-align: center; }
+        .stat-card p { font-size: 2.5rem; font-weight: 900; color: var(--accent-primary); font-family: 'Cinzel', serif; }
+        .terminal-box { background: #000; padding: 15px; border-left: 3px solid var(--accent-primary); font-family: 'Courier New', monospace; font-size: 11px; color: var(--terminal-green); height: 180px; overflow-y: auto; border-radius: 0 8px 8px 0; }
 
-        /* --- TERMINAL / LOGS --- */
-        .terminal-box { margin-top: 15px; background: #000; padding: 15px; border-left: 3px solid var(--accent-primary); font-family: 'Courier New', monospace; font-size: 11px; color: var(--terminal-green); height: 180px; overflow-y: auto; }
-        .terminal-box p { margin-bottom: 6px; }
+        /* --- BENCHMARK TABLE --- */
+        .benchmark-table { width: 100%; border-collapse: collapse; margin-top: 20px; background: #080a0f; border-radius: 8px; overflow: hidden; border: 1px solid var(--border-color); }
+        .benchmark-table th { background: #12151e; color: var(--accent-primary); padding: 12px; text-align: left; font-size: 10px; text-transform: uppercase; letter-spacing: 1px; }
+        .benchmark-table td { padding: 14px 12px; border-bottom: 1px solid var(--border-color); font-size: 12px; }
+        .status-badge { padding: 4px 10px; border-radius: 4px; font-size: 10px; font-weight: bold; text-transform: uppercase; }
+        .status-waiting { color: var(--text-dim); border: 1px solid #1f2533; }
+        .status-running { color: var(--gold); border: 1px solid var(--gold); }
+        .status-done { color: var(--terminal-green); border: 1px solid var(--terminal-green); background: rgba(74, 222, 128, 0.05); }
 
-        /* --- TOKEN LAB OUTPUT --- */
-        #chat-window { height: 350px; background: #05070a; border-radius: 12px; padding: 20px; overflow-y: auto; border: 1px solid var(--border-color); font-family: 'Courier New', monospace; font-size: 13px; color: #a5b4fc; margin-bottom: 20px; }
-        .msg.user { background: #1f2533; border: 1px solid #2d3748; padding: 12px; border-radius: 8px; margin-bottom: 12px; }
-        .msg.bot { background: #0b0d12; border: 1px solid var(--accent-primary); padding: 15px; border-radius: 8px; margin-bottom: 12px; line-height: 1.6; }
-        .telemetry-row { color: var(--terminal-green); font-size: 11px; }
-
-        .input-group { margin-bottom: 20px; text-align: left; }
+        .input-group { margin-bottom: 20px; }
         .input-group label { display: block; color: var(--accent-primary); font-size: 11px; font-weight: 900; margin-bottom: 8px; }
-        .input-group input, .input-group textarea, select, #chat-input { width: 100%; background: #05070a; border: 1px solid var(--border-color); padding: 14px; color: white; border-radius: 8px; }
+        input, select, textarea { width: 100%; background: #05070a; border: 1px solid var(--border-color); padding: 14px; color: white; border-radius: 8px; }
         .action-btn { width: 100%; padding: 18px; background: linear-gradient(45deg, var(--accent-secondary), var(--accent-primary)); color: white; border: none; border-radius: 8px; font-family: 'Cinzel', serif; font-weight: 900; cursor: pointer; letter-spacing: 2px; }
         .blink { animation: blinker 1s linear infinite; }
         @keyframes blinker { 50% { opacity: 0; } }
@@ -85,29 +90,28 @@
         <span class="material-icons" style="font-size: 32px;">shield</span>
         <span class="brand-name">AURELIAN AI</span>
     </div>
-    <div class="nav-item" id="nav-token" onclick="switchModule('token-lab')">
-        <span class="material-icons">calculate</span>
-        <span class="nav-text">Token Lab</span>
-    </div>
-    <div class="nav-item" id="nav-arch" onclick="switchModule('architect')">
-        <span class="material-icons">architecture</span>
-        <span class="nav-text">Architect Studio</span>
-    </div>
-    <div class="nav-item" onclick="logout()">
-        <span class="material-icons">logout</span>
-        <span class="nav-text">Cerrar Sesión</span>
-    </div>
+    <div class="nav-item active" id="nav-dash" onclick="switchModule('dashboard')"><span class="material-icons">dashboard</span><span class="nav-text">Overview</span></div>
+    <div class="nav-item" id="nav-token" onclick="switchModule('token-lab')"><span class="material-icons">calculate</span><span class="nav-text">Token Lab</span></div>
+    <div class="nav-item" id="nav-arch" onclick="switchModule('architect')"><span class="material-icons">architecture</span><span class="nav-text">Architect Studio</span></div>
+    <div class="nav-item" onclick="logout()"><span class="material-icons">logout</span><span class="nav-text">Logout</span></div>
 </aside>
 
 <div id="main-wrapper">
     <header class="top-bar">
         <h2 id="module-title" style="font-family: 'Cinzel', serif; color: var(--accent-primary);">ESTADO IMPERIAL</h2>
-        <div class="user-profile-top">
-            <div class="user-info">
-                <span class="user-label">Agente Activo</span>
-                <span id="display-user-name" class="user-name">---</span>
+        <div class="monitor-tools">
+            <div class="refresh-container">
+                <div class="timer-circle">
+                    <svg><circle cx="16" cy="16" r="14"></circle><circle class="progress" id="js-progress" cx="16" cy="16" r="14"></circle></svg>
+                    <span id="timer-text">60</span>
+                </div>
             </div>
-            <div class="user-avatar"><span class="material-icons">person</span></div>
+            <div class="user-profile-top">
+                <div class="user-info" style="text-align: right; margin-right: 10px;">
+                    <span id="display-user-name" class="user-name">---</span>
+                </div>
+                <div class="user-avatar"><span class="material-icons">person</span></div>
+            </div>
         </div>
     </header>
 
@@ -120,41 +124,31 @@
                     <div class="stat-card"><h3>Agentes</h3><p id="stat-agentes">--</p></div>
                     <div class="stat-card"><h3>Features</h3><p id="stat-tareas">--</p></div>
                 </div>
-                <div style="border-top: 1px solid var(--border-color); padding-top: 25px;">
-                    <h4 style="font-family: 'Cinzel'; font-size: 0.8rem; color: var(--gold); letter-spacing: 2px;">LOG DE OPERACIONES REAL-TIME</h4>
-                    <div id="log-list" class="terminal-box"></div>
-                </div>
+                <h4 style="font-family: 'Cinzel'; font-size: 0.7rem; color: var(--gold); letter-spacing: 2px;">LOG DE OPERACIONES</h4>
+                <div id="log-list" class="terminal-box"></div>
             </div>
 
             <div id="view-token-lab" class="module-view">
-                <div id="chat-window">SISTEMA DE TELEMETRÍA LISTO.</div>
-                <div style="display: flex; gap: 10px; margin-bottom: 15px;">
-                    <select id="model-select" style="width: auto; flex-grow: 1;">
+                <div id="chat-window" style="background:#05070a; border: 1px solid var(--border-color); padding: 20px; border-radius: 12px; height: 350px; overflow-y: auto; font-family: monospace;">
+                    > LISTO PARA BENCHMARK. Los resultados se mostrarán en la tabla incremental.
+                </div>
+                <div style="display: flex; gap: 10px; margin: 20px 0;">
+                    <select id="model-select" style="width: 250px;">
                         <option value="all">COMPARE ALL MODELS</option>
                         <option value="llama3.2:latest">Llama 3.2</option>
                         <option value="codestral:latest">Codestral</option>
                         <option value="mistral-nemo:latest">Mistral Nemo</option>
                     </select>
-                </div>
-                <div style="display: flex; gap: 10px;">
                     <input type="text" id="chat-input" placeholder="Prompt para benchmark..." onkeypress="if(event.key==='Enter') startAnalysis()">
                     <button onclick="startAnalysis()" class="action-btn" style="width: 150px;">EJECUTAR</button>
                 </div>
             </div>
 
             <div id="view-architect" class="module-view">
-                <div class="input-group">
-                    <label>NOMBRE DEL PROYECTO</label>
-                    <input type="text" id="proj-name" placeholder="Nombre único..." autocomplete="off">
-                </div>
-                <div class="input-group">
-                    <label>VISIÓN ESTRATÉGICA</label>
-                    <textarea id="proj-vision" style="height: 150px; resize: none;" placeholder="Define la visión técnica..."></textarea>
-                </div>
-                <button id="btn-refine" class="action-btn" onclick="initArchitectFlow()">INICIAR REFINAMIENTO</button>
-                <div id="terminal-output" class="terminal-box" style="display:none; height: auto;">
-                    <p id="status-line" class="blink">> [INFO]: Conectando con el Core...</p>
-                </div>
+                <div class="input-group"><label>NOMBRE</label><input type="text" id="proj-name"></div>
+                <div class="input-group"><label>VISIÓN</label><textarea id="proj-vision" style="height:100px;"></textarea></div>
+                <button class="action-btn" onclick="initArchitectFlow()">INICIAR REFINAMIENTO</button>
+                <div id="status-line" class="terminal-box" style="display:none; height: auto; margin-top: 20px;"></div>
             </div>
 
         </div>
@@ -164,109 +158,55 @@
 <script type="module">
     import { AurelianCore } from './js/aurelian-core.js';
 
-    // Sesión
-    const activeUser = JSON.parse(localStorage.getItem('aurelian_user'));
-    if (!activeUser) window.location.href = "index.html";
+    let timeLeft = 60;
+    const circleFull = 88;
 
     window.onload = () => {
-        document.getElementById('display-user-name').innerText = activeUser.nombre.toUpperCase();
+        const user = JSON.parse(localStorage.getItem('aurelian_user'));
+        if (!user) window.location.href = "index.html";
+        document.getElementById('display-user-name').innerText = user.nombre.toUpperCase();
+
         syncData();
-        setInterval(syncData, 5000); // Polling de logs y stats
+        startMasterTimer();
     };
 
-    async function syncData() {
-        // Refrescar Logs
-        const logs = await AurelianCore.getLogs();
-        const logBox = document.getElementById('log-list');
-        logBox.innerHTML = logs.map(l => `<p>${l}</p>`).join('');
-        logBox.scrollTop = logBox.scrollHeight;
+    function startMasterTimer() {
+        setInterval(() => {
+            timeLeft--;
+            const progress = document.getElementById('js-progress');
+            const timerText = document.getElementById('timer-text');
 
-        // Refrescar Stats (solo en vista dashboard)
+            const offset = circleFull - (timeLeft / 60) * circleFull;
+            progress.style.strokeDashoffset = offset;
+            timerText.innerText = timeLeft;
+
+            if (timeLeft <= 0) {
+                timeLeft = 60;
+                syncData();
+            }
+        }, 1000);
+    }
+
+    async function syncData() {
+        const logs = await AurelianCore.getLogs();
+        document.getElementById('log-list').innerHTML = logs.map(l => `<p>${l}</p>`).join('');
+
         if(document.getElementById('view-dashboard').classList.contains('active')) {
             const stats = await AurelianCore.getStats();
-            if(stats) {
-                document.getElementById('stat-proyectos').innerText = stats.proyectos;
-                document.getElementById('stat-agentes').innerText = stats.agentes;
-                document.getElementById('stat-tareas').innerText = stats.tareas;
-            }
+            document.getElementById('stat-proyectos').innerText = stats.proyectos;
+            document.getElementById('stat-agentes').innerText = stats.agentes;
+            document.getElementById('stat-tareas').innerText = stats.tareas;
         }
     }
 
-    // Navegación
-    window.switchModule = (mod) => {
-        document.querySelectorAll('.module-view').forEach(v => v.classList.remove('active'));
-        document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
-
-        if(mod === 'dashboard') {
-            document.getElementById('view-dashboard').classList.add('active');
-            document.getElementById('module-title').innerText = "ESTADO IMPERIAL";
-        } else if(mod === 'token-lab') {
-            document.getElementById('view-token-lab').classList.add('active');
-            document.getElementById('nav-token').classList.add('active');
-            document.getElementById('module-title').innerText = "TOKEN LAB :: PERFORMANCE";
-        } else if(mod === 'architect') {
-            document.getElementById('view-architect').classList.add('active');
-            document.getElementById('nav-arch').classList.add('active');
-            document.getElementById('module-title').innerText = "ARCHITECT STUDIO :: SENTINEL";
-        }
-    }
-
-    // Lógica de Benchmark (Mejorada con Telemetría)
     window.startAnalysis = async function() {
         const input = document.getElementById('chat-input');
         const win = document.getElementById('chat-window');
         const prompt = input.value.trim();
-        const val = document.getElementById('model-select').value;
+        const modelVal = document.getElementById('model-select').value;
         if(!prompt) return;
 
-        win.innerHTML += `<div class="msg user">> [BENCHMARK]: ${prompt}</div>`;
-        input.value = "";
-        win.scrollTop = win.scrollHeight;
+        const models = modelVal === 'all' ? ['llama3.2:latest', 'mistral-nemo:latest', 'codestral:latest'] : [modelVal];
 
-        const models = val === 'all' ? ['llama3.2:latest', 'mistral-nemo:latest', 'codestral:latest'] : [val];
-
-        for (const m of models) {
-            const tid = `l-${m.replace(/[:.]/g, '-')}`;
-            win.innerHTML += `<div id="${tid}" style="font-size: 10px; color: var(--text-dim); margin-bottom: 8px;">> Solicitando telemetría a ${m}...</div>`;
-
-            try {
-                const data = await AurelianCore.runBenchmark(prompt, m);
-                if(data.telemetria) {
-                    const t = data.telemetria;
-                    document.getElementById(tid).innerHTML = `
-                        <div class="msg bot">
-                            <b style="color:var(--gold)">${m.toUpperCase()}</b><br>
-                            <div class="telemetry-row">• Velocidad: ${t.velocidad}</div>
-                            <div class="telemetry-row">• Latencia: ${t.latencia_total}</div>
-                            <div class="telemetry-row">• Tokens: IN: ${t.tokens_entrada} | OUT: ${t.tokens_salida}</div>
-                        </div>`;
-                }
-            } catch (e) {
-                document.getElementById(tid).innerText = `> [FAIL]: Error en la conexión con el Core para ${m}.`;
-            }
-        }
-        win.scrollTop = win.scrollHeight;
-    }
-
-    window.initArchitectFlow = async function() {
-        const nombre = document.getElementById('proj-name').value;
-        const vision = document.getElementById('proj-vision').value;
-        const status = document.getElementById('status-line');
-        if(!nombre || !vision) return alert("Faltan datos.");
-
-        document.getElementById('terminal-output').style.display = "block";
-        status.innerText = "> Enviando visión al Core...";
-
-        try {
-            const d = await AurelianCore.initProject(nombre, vision);
-            status.innerHTML = `<span style="color: var(--terminal-green);">> [OK]: Proyecto #${d.id} en Tabularium.</span>`;
-        } catch (e) { status.innerText = "> [ERROR]: Fallo de conexión."; }
-    }
-
-    window.logout = () => {
-        localStorage.removeItem('aurelian_user');
-        window.location.href = "index.html";
-    }
-</script>
-</body>
-</html>
+        // Crear tabla dinámica
+        const
