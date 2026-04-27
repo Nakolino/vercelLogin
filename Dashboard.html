@@ -93,19 +93,30 @@
         .stat-card h3 { color: var(--text-dim); font-size: 0.7rem; text-transform: uppercase; letter-spacing: 2px; margin-bottom: 15px; }
         .stat-card p { font-size: 2.8rem; font-weight: 900; color: var(--accent-primary); font-family: 'Cinzel', serif; }
 
-        /* --- TOKEN LAB & ARCHITECT INPUTS --- */
+        /* --- LOG FEED (NUEVO) --- */
+        .terminal-box {
+            margin-top: 15px;
+            background: #000;
+            padding: 15px;
+            border-left: 3px solid var(--accent-primary);
+            font-family: 'Courier New', monospace;
+            font-size: 11px;
+            color: var(--terminal-green);
+            height: 180px;
+            overflow-y: auto;
+            border-radius: 0 8px 8px 0;
+        }
+        .terminal-box p { margin-bottom: 6px; line-height: 1.4; }
+
+        /* --- OTROS ELEMENTOS --- */
         #chat-window { height: 350px; background: #05070a; border-radius: 12px; padding: 20px; overflow-y: auto; border: 1px solid var(--border-color); font-family: 'Courier New', monospace; font-size: 13px; color: #a5b4fc; margin-bottom: 20px; }
         .msg.user { background: #1f2533; border: 1px solid #2d3748; padding: 12px; border-radius: 8px; margin-bottom: 12px; }
         .msg.bot { background: #0b0d12; border: 1px solid var(--accent-primary); padding: 15px; border-radius: 8px; margin-bottom: 12px; }
-        .rank-table { width: 100%; border-collapse: collapse; margin-top: 15px; font-size: 11px; border: 1px solid var(--accent-secondary); }
-        .rank-table th { background: #12151e; color: var(--accent-primary); text-align: left; padding: 10px; }
-        .rank-table td { padding: 10px; border-bottom: 1px solid #1f2533; }
 
         .input-group { margin-bottom: 20px; text-align: left; }
         .input-group label { display: block; color: var(--accent-primary); font-size: 11px; font-weight: 900; margin-bottom: 8px; }
         .input-group input, .input-group textarea, select, #chat-input { width: 100%; background: #05070a; border: 1px solid var(--border-color); padding: 14px; color: white; border-radius: 8px; }
         .action-btn { width: 100%; padding: 18px; background: linear-gradient(45deg, var(--accent-secondary), var(--accent-primary)); color: white; border: none; border-radius: 8px; font-family: 'Cinzel', serif; font-weight: 900; cursor: pointer; letter-spacing: 2px; }
-        .terminal-box { margin-top: 25px; background: #000; padding: 20px; border-left: 3px solid var(--terminal-green); font-family: 'Courier New', monospace; font-size: 12px; }
         .blink { animation: blinker 1s linear infinite; }
         @keyframes blinker { 50% { opacity: 0; } }
     </style>
@@ -156,10 +167,13 @@
                     <div class="stat-card"><h3>Agentes</h3><p id="stat-agentes">--</p></div>
                     <div class="stat-card"><h3>Features</h3><p id="stat-tareas">--</p></div>
                 </div>
+
                 <div style="border-top: 1px solid var(--border-color); padding-top: 25px;">
-                    <h4 style="font-family: 'Cinzel'; font-size: 0.8rem; color: var(--gold); letter-spacing: 2px;">LOG DE OPERACIONES</h4>
-                    <p style="font-size: 12px; color: var(--text-dim); margin-top: 12px;">> Sincronización con el Tabularium exitosa.</p>
-                    <p style="font-size: 12px; color: var(--terminal-green); margin-top: 5px;">> Núcleo Aurelian operando bajo parámetros normales.</p>
+                    <h4 style="font-family: 'Cinzel'; font-size: 0.8rem; color: var(--gold); letter-spacing: 2px;">LOG DE OPERACIONES REAL-TIME</h4>
+                    <div id="log-list" class="terminal-box">
+                        <p>> Sincronizando con el Tabularium...</p>
+                        <p>> Esperando señal del Núcleo Aurelian...</p>
+                    </div>
                 </div>
             </div>
 
@@ -189,7 +203,7 @@
                     <textarea id="proj-vision" style="height: 150px; resize: none;" placeholder="Define la visión técnica aquí..."></textarea>
                 </div>
                 <button id="btn-refine" class="action-btn" onclick="initArchitectFlow()">INICIAR REFINAMIENTO</button>
-                <div id="terminal-output" class="terminal-box" style="display:none;">
+                <div id="terminal-output" class="terminal-box" style="display:none; height: auto;">
                     <p id="status-line" class="blink">> [INFO]: Conectando con el Core...</p>
                 </div>
             </div>
@@ -199,7 +213,9 @@
 </div>
 
 <script>
+    // Configuración de Endpoints
     const API_BASE = "http://localhost:8082/api/projects";
+    const AGENTE_API = "http://localhost:8082/api/agentes";
     const TOKEN_URL = "https://ungraphitized-collette-rheumatoidally.ngrok-free.dev/api/tokens/analizar";
 
     // --- SESIÓN ---
@@ -210,9 +226,35 @@
 
     window.onload = () => {
         document.getElementById('display-user-name').innerText = activeUser.nombre.toUpperCase();
+
+        // Carga inicial
         updateStats();
-        setInterval(updateStats, 30000);
+        refreshLogs();
+
+        // Ciclos de refresco (Polling)
+        setInterval(updateStats, 30000); // Stats cada 30s
+        setInterval(refreshLogs, 5000);   // Logs cada 5s (Vivo)
     };
+
+    // --- MEJORA 2: REFRESCAR LOGS ---
+    async function refreshLogs() {
+        try {
+            // Llamada al nuevo endpoint de LogService
+            const resp = await fetch(`${AGENTE_API}/logs`);
+            if (resp.ok) {
+                const logs = await resp.json();
+                const container = document.getElementById('log-list');
+
+                // Mapeamos los strings a párrafos de terminal
+                container.innerHTML = logs.map(line => `<p>${line}</p>`).join('');
+
+                // Autoscroll al final si hay mucha actividad
+                container.scrollTop = container.scrollHeight;
+            }
+        } catch (e) {
+            console.error("> [SISTEMA]: Error de sincronización con el LogService.");
+        }
+    }
 
     function switchModule(mod) {
         document.querySelectorAll('.module-view').forEach(v => v.classList.remove('active'));
@@ -222,6 +264,7 @@
             document.getElementById('view-dashboard').classList.add('active');
             document.getElementById('module-title').innerText = "ESTADO IMPERIAL";
             updateStats();
+            refreshLogs();
         } else if(mod === 'token-lab') {
             document.getElementById('view-token-lab').classList.add('active');
             document.getElementById('nav-token').classList.add('active');
