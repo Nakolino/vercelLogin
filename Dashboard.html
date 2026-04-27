@@ -21,134 +21,46 @@
         }
 
         * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { font-family: 'Inter', sans-serif; background-color: var(--bg-dark); color: var(--text-main); display: flex; height: 100vh; overflow: hidden; }
 
-        body {
-            font-family: 'Inter', sans-serif;
-            background-color: var(--bg-dark);
-            color: var(--text-main);
-            display: flex;
-            height: 100vh;
-            overflow: hidden;
-        }
-
-        /* --- SIDEBAR DINÁMICA --- */
-        .sidebar {
-            width: 80px;
-            background-color: var(--panel-dark);
-            border-right: 1px solid var(--border-color);
-            padding: 20px 0;
-            transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            overflow: hidden;
-            white-space: nowrap;
-            flex-shrink: 0;
-            z-index: 100;
-        }
+        /* --- SIDEBAR --- */
+        .sidebar { width: 80px; background-color: var(--panel-dark); border-right: 1px solid var(--border-color); padding: 20px 0; transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1); overflow: hidden; white-space: nowrap; flex-shrink: 0; z-index: 100; }
         .sidebar:hover { width: 260px; }
-
-        .brand-container {
-            display: flex;
-            align-items: center;
-            padding: 0 20px;
-            margin-bottom: 40px;
-            color: var(--accent-primary);
-        }
-        .brand-name {
-            font-family: 'Cinzel', serif;
-            font-weight: 900;
-            font-size: 18px;
-            margin-left: 15px;
-            opacity: 0;
-            transition: opacity 0.3s;
-            letter-spacing: 2px;
-        }
+        .brand-container { display: flex; align-items: center; padding: 0 20px; margin-bottom: 40px; color: var(--accent-primary); }
+        .brand-name { font-family: 'Cinzel', serif; font-weight: 900; font-size: 18px; margin-left: 15px; opacity: 0; transition: opacity 0.3s; letter-spacing: 2px; }
         .sidebar:hover .brand-name { opacity: 1; }
-
-        .nav-item {
-            display: flex;
-            align-items: center;
-            padding: 15px 25px;
-            cursor: pointer;
-            color: var(--text-dim);
-            transition: 0.2s;
-            border-left: 3px solid transparent;
-        }
-        .nav-item:hover, .nav-item.active {
-            background-color: rgba(99, 102, 241, 0.1);
-            color: white;
-            border-left-color: var(--accent-primary);
-        }
+        .nav-item { display: flex; align-items: center; padding: 15px 25px; cursor: pointer; color: var(--text-dim); transition: 0.2s; border-left: 3px solid transparent; }
+        .nav-item:hover, .nav-item.active { background-color: rgba(99, 102, 241, 0.1); color: white; border-left-color: var(--accent-primary); }
         .nav-item .material-icons { min-width: 30px; font-size: 24px; }
         .nav-text { opacity: 0; transition: opacity 0.2s; margin-left: 20px; font-weight: bold; }
         .sidebar:hover .nav-text { opacity: 1; }
 
-        /* --- CONTENIDO PRINCIPAL --- */
-        #main-wrapper {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            background-image: radial-gradient(circle at top right, #161b2d 0%, #020617 40%);
-            overflow-y: auto;
-        }
+        /* --- CONTENIDO --- */
+        #main-wrapper { flex: 1; display: flex; flex-direction: column; background-image: radial-gradient(circle at top right, #161b2d 0%, #020617 40%); overflow: hidden; }
+        .top-bar { padding: 20px 40px; border-bottom: 1px solid var(--border-color); display: flex; justify-content: space-between; align-items: center; background: rgba(2, 6, 23, 0.7); backdrop-filter: blur(10px); }
+        .content-area { padding: 40px; flex: 1; overflow-y: auto; }
+        .card { background: rgba(11, 13, 18, 0.8); backdrop-filter: blur(10px); padding: 30px; border-radius: 16px; border: 1px solid var(--border-color); max-width: 1000px; margin: auto; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
 
-        .top-bar {
-            padding: 20px 40px;
-            border-bottom: 1px solid var(--border-color);
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            background: rgba(2, 6, 23, 0.7);
-            backdrop-filter: blur(10px);
-        }
+        /* --- VISTAS (MODAL SYSTEM) --- */
+        .module-view { display: none; }
+        .module-view.active { display: block; animation: fadeIn 0.3s ease; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
 
-        .content-area { padding: 40px; }
-
-        .card {
-            background: rgba(11, 13, 18, 0.8);
-            backdrop-filter: blur(10px);
-            padding: 30px;
-            border-radius: 16px;
-            border: 1px solid var(--border-color);
-            max-width: 1000px;
-            margin: auto;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
-        }
-
-        /* --- TOKEN LAB UI --- */
-        #chat-window {
-            height: 400px;
-            background: #05070a;
-            border-radius: 12px;
-            padding: 20px;
-            overflow-y: auto;
-            border: 1px solid var(--border-color);
-            font-family: 'Courier New', monospace;
-            font-size: 13px;
-            color: #a5b4fc;
-            margin-bottom: 20px;
-        }
-        .msg { margin-bottom: 12px; padding: 12px 16px; border-radius: 8px; line-height: 1.5; }
+        /* --- TOKEN LAB STYLES --- */
+        #chat-window { height: 400px; background: #05070a; border-radius: 12px; padding: 20px; overflow-y: auto; border: 1px solid var(--border-color); font-family: 'Courier New', monospace; font-size: 13px; color: #a5b4fc; margin-bottom: 20px; }
+        .msg { margin-bottom: 12px; padding: 12px 16px; border-radius: 8px; }
         .msg.user { background: #1f2533; border: 1px solid #2d3748; color: white; margin-left: 20px; }
         .msg.bot { background: #0b0d12; border: 1px solid var(--accent-primary); width: 100%; }
-
         .rank-table { width: 100%; border-collapse: collapse; margin-top: 15px; background: #000; border: 1px solid var(--accent-secondary); }
-        .rank-table th { background: #12151e; color: var(--accent-primary); text-align: left; padding: 10px; font-size: 10px; text-transform: uppercase; border-bottom: 2px solid var(--accent-secondary); }
+        .rank-table th { background: #12151e; color: var(--accent-primary); text-align: left; padding: 10px; font-size: 10px; text-transform: uppercase; }
         .rank-table td { padding: 10px; border-bottom: 1px solid #1f2533; font-size: 12px; }
         .rank-first { color: var(--gold); font-weight: 900; background: rgba(250, 204, 21, 0.05); }
 
-        /* --- ARCHITECT STUDIO UI --- */
-        .architect-ui { text-align: center; }
+        /* --- ARCHITECT STYLES --- */
         .input-group { margin-bottom: 20px; text-align: left; }
         .input-group label { display: block; color: var(--accent-primary); font-size: 11px; font-weight: 900; margin-bottom: 8px; letter-spacing: 1px; }
-        .input-group input, .input-group textarea, select, input#chat-input {
-            width: 100%; background: #05070a; border: 1px solid var(--border-color); padding: 14px; color: white; border-radius: 8px; font-family: 'Inter', sans-serif;
-        }
-        .input-group textarea { height: 120px; resize: none; }
-
-        .action-btn {
-            width: 100%; padding: 16px; background: linear-gradient(45deg, var(--accent-secondary), var(--accent-primary)); color: white; border: none; border-radius: 8px; font-family: 'Cinzel', serif; font-weight: 900; cursor: pointer; transition: 0.3s; letter-spacing: 2px;
-        }
-        .action-btn:hover { transform: translateY(-2px); box-shadow: 0 5px 20px rgba(99, 102, 241, 0.4); }
-
+        .input-group input, .input-group textarea, select, #chat-input { width: 100%; background: #05070a; border: 1px solid var(--border-color); padding: 14px; color: white; border-radius: 8px; }
+        .action-btn { width: 100%; padding: 16px; background: linear-gradient(45deg, var(--accent-secondary), var(--accent-primary)); color: white; border: none; border-radius: 8px; font-family: 'Cinzel', serif; font-weight: 900; cursor: pointer; letter-spacing: 2px; }
         .terminal-box { margin-top: 20px; background: #000; padding: 15px; border-left: 3px solid var(--terminal-green); font-family: 'Courier New', monospace; font-size: 12px; text-align: left; }
         .blink { animation: blinker 1s linear infinite; }
         @keyframes blinker { 50% { opacity: 0; } }
@@ -157,57 +69,22 @@
 <body>
 
 <aside class="sidebar">
-    <div class="brand-container">
-        <span class="material-icons" style="font-size: 32px;">shield</span>
-        <span class="brand-name">AURELIAN AI</span>
-    </div>
-    <div class="nav-item active" id="nav-token" onclick="loadModule('token-lab')">
-        <span class="material-icons">calculate</span>
-        <span class="nav-text">Token Lab</span>
-    </div>
-    <div class="nav-item" id="nav-architect" onclick="loadModule('architect')">
-        <span class="material-icons">architecture</span>
-        <span class="nav-text">Architect Studio</span>
-    </div>
-    <div class="nav-item">
-        <span class="material-icons">hub</span>
-        <span class="nav-text">Legio Agents</span>
-    </div>
+    <div class="brand-container"><span class="material-icons" style="font-size: 32px;">shield</span><span class="brand-name">AURELIAN AI</span></div>
+    <div class="nav-item active" id="nav-token" onclick="switchModule('token-lab')"><span class="material-icons">calculate</span><span class="nav-text">Token Lab</span></div>
+    <div class="nav-item" id="nav-architect" onclick="switchModule('architect')"><span class="material-icons">architecture</span><span class="nav-text">Architect Studio</span></div>
+    <div class="nav-item"><span class="material-icons">hub</span><span class="nav-text">Legio Agents</span></div>
 </aside>
 
 <div id="main-wrapper">
     <header class="top-bar">
         <h2 id="module-title" style="font-family: 'Cinzel', serif; letter-spacing: 2px; color: var(--accent-primary);">AURELIAN CORE</h2>
-        <div style="font-size: 12px; color: var(--text-dim);">SYSTEM STATUS: <span style="color: var(--terminal-green);">ONLINE</span></div>
+        <div style="font-size: 12px; color: var(--text-dim);">CORE STATUS: <span style="color: var(--terminal-green);">SYNCED</span></div>
     </header>
 
     <main class="content-area">
         <div class="card">
-            <div id="module-body">
-            </div>
-        </div>
-    </main>
-</div>
-
-<script>
-    // URLs de conexión
-    const TOKEN_URL = "https://ungraphitized-collette-rheumatoidally.ngrok-free.dev/api/tokens/analizar";
-    const ARCHITECT_URL = "http://localhost:8082/api/projects/init";
-
-    window.onload = () => loadModule('token-lab');
-
-    function loadModule(module) {
-        const body = document.getElementById('module-body');
-        const title = document.getElementById('module-title');
-
-        // Update nav UI
-        document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
-
-        if (module === 'token-lab') {
-            document.getElementById('nav-token').classList.add('active');
-            title.innerText = "TOKEN LAB :: PERFORMANCE PROFILER";
-            body.innerHTML = `
-                <div id="chat-window">PROTOCOLO LISTO. Seleccione objetivo de análisis para iniciar Benchmark.</div>
+            <div id="view-token-lab" class="module-view active">
+                <div id="chat-window">PROTOCOLO LISTO. Iniciando persistencia de estado...</div>
                 <div style="display: flex; align-items: center; gap: 15px; margin-bottom: 15px;">
                     <label style="font-size: 11px; color: var(--text-dim); font-weight: 800;">TARGET ENGINE:</label>
                     <select id="model-select" style="width: auto; flex: 1;">
@@ -220,47 +97,63 @@
                 <div style="display: flex; gap: 10px;">
                     <input type="text" id="chat-input" placeholder="Escribe el prompt de estrés..." onkeypress="if(event.key==='Enter') startAnalysis()">
                     <button class="action-btn" style="width: 180px;" onclick="startAnalysis()">EJECUTAR</button>
-                </div>`;
-        }
+                </div>
+            </div>
 
-        if (module === 'architect') {
+            <div id="view-architect" class="module-view">
+                <div class="input-group">
+                    <label>NOMBRE DEL PROYECTO</label>
+                    <input type="text" id="proj-name" placeholder="Ej: Operacion Aureliano..." autocomplete="off">
+                </div>
+                <div class="input-group">
+                    <label>VISIÓN ESTRATÉGICA (DESGLOSE DE FEATURES)</label>
+                    <textarea id="proj-vision" style="height: 120px; resize: none;" placeholder="Describe la visión técnica..."></textarea>
+                </div>
+                <button id="btn-refine" class="action-btn" onclick="initArchitectFlow()">INICIAR REFINAMIENTO IMPERIAL</button>
+                <div id="terminal-output" class="terminal-box" style="display:none;">
+                    <p>> [SYSTEM]: Conectando con el Tabularium...</p>
+                    <p id="status-line" class="blink"></p>
+                </div>
+            </div>
+        </div>
+    </main>
+</div>
+
+<script>
+    const TOKEN_URL = "https://ungraphitized-collette-rheumatoidally.ngrok-free.dev/api/tokens/analizar";
+    const ARCHITECT_URL = "http://localhost:8082/api/projects/init";
+
+    // --- LÓGICA DE PERSISTENCIA (Sustituye a loadModule) ---
+    function switchModule(moduleId) {
+        // Ocultar todas las vistas
+        document.querySelectorAll('.module-view').forEach(v => v.classList.remove('active'));
+        document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
+
+        // Mostrar la seleccionada
+        if(moduleId === 'token-lab') {
+            document.getElementById('view-token-lab').classList.add('active');
+            document.getElementById('nav-token').classList.add('active');
+            document.getElementById('module-title').innerText = "TOKEN LAB :: PERFORMANCE PROFILER";
+        } else if(moduleId === 'architect') {
+            document.getElementById('view-architect').classList.add('active');
             document.getElementById('nav-architect').classList.add('active');
-            title.innerText = "ARCHITECT STUDIO :: SENTINEL V1.0";
-            body.innerHTML = `
-                <div class="architect-ui">
-                    <div class="input-group">
-                        <label>NOMBRE DEL PROYECTO</label>
-                        <input type="text" id="proj-name" placeholder="Ej: Operacion Aureliano..." autocomplete="off">
-                    </div>
-                    <div class="input-group">
-                        <label>VISIÓN ESTRATÉGICA (DESGLOSE DE FEATURES)</label>
-                        <textarea id="proj-vision" placeholder="Describe la visión técnica para que el Sentinel genere el desglose..."></textarea>
-                    </div>
-                    <button id="btn-refine" class="action-btn" onclick="initArchitectFlow()">
-                        INICIAR REFINAMIENTO IMPERIAL
-                    </button>
-                    <div id="terminal-output" class="terminal-box" style="display:none;">
-                        <p>> [SYSTEM]: Conectando con el Tabularium (Puerto 8082)...</p>
-                        <p id="status-line" class="blink"></p>
-                    </div>
-                </div>`;
+            document.getElementById('module-title').innerText = "ARCHITECT STUDIO :: SENTINEL V1.0";
         }
     }
 
-    // --- LÓGICA TOKEN LAB ---
+    // --- TOKEN LAB LOGIC ---
     async function startAnalysis() {
         const input = document.getElementById('chat-input');
-        const modelSelect = document.getElementById('model-select');
         const win = document.getElementById('chat-window');
         const prompt = input.value.trim();
         if(!prompt) return;
 
-        win.innerHTML = `<div class="msg user">> [STRESS_TEST_INIT] ${prompt}</div>`;
+        win.innerHTML += `<div class="msg user">> [STRESS_TEST_INIT] ${prompt}</div>`;
         input.value = "";
+        win.scrollTop = win.scrollHeight;
 
-        const models = modelSelect.value === 'all'
-            ? ['llama3.2:latest', 'mistral-nemo:latest', 'codestral:latest']
-            : [modelSelect.value];
+        const models = document.getElementById('model-select').value === 'all'
+            ? ['llama3.2:latest', 'mistral-nemo:latest', 'codestral:latest'] : [document.getElementById('model-select').value];
 
         let results = [];
         for (const model of models) {
@@ -277,13 +170,7 @@
                 if (resp.ok) {
                     const data = await resp.json();
                     const t = data.telemetria || {};
-                    results.push({
-                        model,
-                        speed: t.velocidad || '0 t/s',
-                        speedNum: parseFloat(t.velocidad) || 0,
-                        latency: t.latencia_total || '0s',
-                        promptTokens: t.tokens_entrada || 0
-                    });
+                    results.push({ model, speed: t.velocidad || '0 t/s', speedNum: parseFloat(t.velocidad) || 0, latency: t.latencia_total || '0s', promptTokens: t.tokens_entrada || 0 });
                     document.getElementById(id).innerHTML = `<span style="color: var(--terminal-green);">> [OK] ${model} finalizado.</span>`;
                 }
             } catch (e) {
@@ -295,51 +182,35 @@
 
     function renderComparison(results, win) {
         results.sort((a, b) => b.speedNum - a.speedNum);
-        let table = `
-            <div class="msg bot">
-                <b style="color: var(--gold);">CORE::BENCHMARK_COMPLETE</b>
-                <table class="rank-table">
-                    <thead><tr><th>RANK</th><th>ENGINE</th><th>TOKENS</th><th>SPEED</th><th>LATENCY</th></tr></thead>
-                    <tbody>`;
+        let table = `<div class="msg bot"><b style="color: var(--gold);">CORE::BENCHMARK_COMPLETE</b><table class="rank-table"><thead><tr><th>RANK</th><th>ENGINE</th><th>TOKENS</th><th>SPEED</th><th>LATENCY</th></tr></thead><tbody>`;
         results.forEach((res, i) => {
-            table += `<tr ${i===0 ? 'class="rank-first"' : ''}>
-                <td>#${i+1}</td><td>${res.model}</td><td>${res.promptTokens}</td><td>${res.speed}</td><td>${res.latency}</td>
-            </tr>`;
+            table += `<tr ${i===0 ? 'class="rank-first"' : ''}><td>#${i+1}</td><td>${res.model}</td><td>${res.promptTokens}</td><td>${res.speed}</td><td>${res.latency}</td></tr>`;
         });
         table += `</tbody></table></div>`;
         win.innerHTML += table;
         win.scrollTop = win.scrollHeight;
     }
 
-    // --- LÓGICA ARCHITECT STUDIO ---
+    // --- ARCHITECT LOGIC ---
     async function initArchitectFlow() {
         const nombre = document.getElementById('proj-name').value;
         const vision = document.getElementById('proj-vision').value;
         const statusLine = document.getElementById('status-line');
         const btn = document.getElementById('btn-refine');
-
-        if(!nombre || !vision) return alert("Emperador, defina nombre y visión.");
+        if(!nombre || !vision) return alert("Defina nombre y visión.");
 
         btn.disabled = true;
-        btn.innerText = "TRANSMITIENDO...";
         document.getElementById('terminal-output').style.display = "block";
-        statusLine.innerText = "> [INFO]: Sanitizando datos y enviando al Core...";
+        statusLine.innerText = "> [INFO]: Sanitizando y enviando al Core...";
 
         try {
-            const resp = await fetch(ARCHITECT_URL, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ nombre, vision })
-            });
+            const resp = await fetch(ARCHITECT_URL, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ nombre, vision }) });
             if(resp.ok) {
                 const data = await resp.json();
-                statusLine.innerHTML = `<span style="color: var(--terminal-green);">> [OK]: Proyecto #${data.id} en el Tabularium.</span><br>> [WAIT]: Master Builder invocado en n8n...`;
+                statusLine.innerHTML = `<span style="color: var(--terminal-green);">> [OK]: Proyecto #${data.id} en Tabularium.</span><br>> [WAIT]: Master Builder invocado en n8n...`;
             }
-        } catch (e) {
-            statusLine.innerHTML = `<span style="color: #f87171;">> [ERROR]: Backend fuera de línea.</span>`;
-        } finally {
-            setTimeout(() => { btn.disabled = false; btn.innerText = "INICIAR REFINAMIENTO IMPERIAL"; }, 3000);
-        }
+        } catch (e) { statusLine.innerHTML = `<span style="color: #f87171;">> [ERROR]: Backend fuera de línea.</span>`; }
+        finally { setTimeout(() => { btn.disabled = false; }, 3000); }
     }
 </script>
 </body>
