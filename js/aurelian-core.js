@@ -1,11 +1,10 @@
 /**
- * AURELIAN CORE API - v2.1 (Atenea Style)
+ * AURELIAN CORE API - v2.2
  * Maneja la comunicación con el Core 8082
  */
 const BASE_URL = "http://localhost:8082/api";
 
 export const AurelianCore = {
-    // Obtener logs con parámetro anti-cache
     async getLogs() {
         try {
             const resp = await fetch(`${BASE_URL}/agentes/logs?t=${Date.now()}`);
