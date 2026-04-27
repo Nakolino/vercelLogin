@@ -209,4 +209,63 @@
         const models = modelVal === 'all' ? ['llama3.2:latest', 'mistral-nemo:latest', 'codestral:latest'] : [modelVal];
 
         // Crear tabla dinámica
-        const
+        const tableId = `table-${Date.now()}`;
+        let tableHTML = `
+            <div style="margin-bottom: 20px;">
+                <div style="color:var(--gold); margin-bottom: 10px;">> [BENCHMARK]: ${prompt}</div>
+                <table class="benchmark-table" id="${tableId}">
+                    <thead><tr><th>Motor AI</th><th>Velocidad (t/s)</th><th>Latencia</th><th>Estado</th></tr></thead>
+                    <tbody>
+                        ${models.map(m => `
+                            <tr id="row-${m.replace(/[:.]/g, '-')}">
+                                <td><b>${m.toUpperCase()}</b></td>
+                                <td class="vel">--</td><td class="lat">--</td>
+                                <td class="status"><span class="status-badge status-waiting">Esperando</span></td>
+                            </tr>
+                        `).join('')}
+                    </tbody>
+                </table>
+            </div>`;
+
+        win.innerHTML += tableHTML;
+        input.value = "";
+        win.scrollTop = win.scrollHeight;
+
+        for (const m of models) {
+            const row = document.querySelector(`#${tableId} #row-${m.replace(/[:.]/g, '-')}`);
+            row.querySelector('.status').innerHTML = `<span class="status-badge status-running blink">Procesando</span>`;
+
+            try {
+                const data = await AurelianCore.runBenchmark(prompt, m);
+                if(data.telemetria) {
+                    const t = data.telemetria;
+                    row.querySelector('.vel').innerText = t.velocidad;
+                    row.querySelector('.lat').innerText = t.latencia_total;
+                    row.querySelector('.status').innerHTML = `<span class="status-badge status-done">Completo</span>`;
+                }
+            } catch (e) {
+                row.querySelector('.status').innerHTML = `<span style="color:var(--error-red)">Error</span>`;
+            }
+        }
+        win.scrollTop = win.scrollHeight;
+    };
+
+    window.switchModule = (mod) => {
+        document.querySelectorAll('.module-view').forEach(v => v.classList.remove('active'));
+        document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
+        if(mod === 'dashboard') {
+            document.getElementById('view-dashboard').classList.add('active');
+            document.getElementById('nav-dash').classList.add('active');
+        } else if(mod === 'token-lab') {
+            document.getElementById('view-token-lab').classList.add('active');
+            document.getElementById('nav-token').classList.add('active');
+        } else if(mod === 'architect') {
+            document.getElementById('view-architect').classList.add('active');
+            document.getElementById('nav-arch').classList.add('active');
+        }
+    };
+
+    window.logout = () => { localStorage.removeItem('aurelian_user'); window.location.href = "index.html"; };
+</script>
+</body>
+</html>
