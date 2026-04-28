@@ -84,6 +84,7 @@ export const AurelianCore = {
     /**
      * Inicia el flujo de refinamiento en el Architect Studio
      */
+// Busca la función initProject y déjala así:
     async initProject(nombre, vision) {
         try {
             const resp = await fetch(`${BASE_URL}/projects/init`, {
@@ -91,11 +92,17 @@ export const AurelianCore = {
                 headers: DEFAULT_HEADERS,
                 body: JSON.stringify({ nombre, vision })
             });
-            if (!resp.ok) throw new Error("No se pudo iniciar el proyecto");
+
+            // Si el servidor responde un error (como 409), lanzamos el error al JS
+            if (!resp.ok) {
+                const errorData = await resp.json();
+                throw new Error(JSON.stringify(errorData));
+            }
+
             return await resp.json();
         } catch (e) {
-            console.error("Error en Architect Studio:", e);
-            throw e;
+            throw e; // Lanzamos el error hacia el Dashboard para que el chat lo pinte
         }
     }
+
 };

@@ -76,6 +76,25 @@
         .action-btn { width: 100%; padding: 18px; background: linear-gradient(45deg, var(--accent-secondary), var(--accent-primary)); color: white; border: none; border-radius: 8px; cursor: pointer; font-family: 'Cinzel'; font-weight: bold; letter-spacing: 2px; }
 
         .terminal-box { background: #000; padding: 15px; border-left: 3px solid var(--accent-primary); font-family: monospace; font-size: 11px; color: var(--terminal-green); height: 180px; overflow-y: auto; }
+
+        /* CHAT ARCHITECT STYLES */
+        .chat-container { display: flex; flex-direction: column; gap: 20px; max-height: 500px; overflow-y: auto; padding-right: 10px; }
+        .chat-msg { padding: 15px; border-radius: 12px; max-width: 85%; font-size: 13px; line-height: 1.5; position: relative; }
+        .msg-system { background: rgba(99, 102, 241, 0.1); border: 1px solid var(--accent-primary); align-self: flex-start; color: var(--text-main); }
+        .msg-user { background: var(--panel-dark); border: 1px solid var(--border-color); align-self: flex-end; color: var(--text-dim); }
+
+        /* WIDGETS DE RESULTADO */
+        .refinement-card {
+            background: linear-gradient(145deg, #0f172a, #1e1b4b);
+            border: 1px solid var(--gold); padding: 20px; border-radius: 12px; margin-top: 15px;
+            box-shadow: 0 0 20px rgba(250, 204, 21, 0.1);
+        }
+        .collision-card {
+            background: rgba(239, 68, 68, 0.1); border: 1px solid var(--error-red);
+            padding: 20px; border-radius: 12px; margin-top: 15px;
+        }
+        .badge-tech { font-size: 10px; background: var(--accent-primary); color: white; padding: 2px 8px; border-radius: 4px; text-transform: uppercase; margin-bottom: 10px; display: inline-block; }
+
     </style>
 </head>
 <body>
@@ -145,16 +164,20 @@
             </div>
 
             <div id="view-architect" class="module-view">
-                <span class="input-label">PROJECT IDENTIFIER</span>
-                <input type="text" id="proj-name" placeholder="Nombre único para el Tabularium...">
+                <div id="architect-chat-flow" class="chat-container">
+                    <div class="chat-msg msg-system">
+                        <span class="badge-tech">Orquestador v2.0</span>
+                        <p>Salve, Agente. Define la <strong>Visión Estratégica</strong> del nuevo despliegue. Analizaré la viabilidad técnica y buscaré colisiones en el Tabularium.</p>
+                    </div>
+                </div>
 
-                <span class="input-label">STRATEGIC VISION</span>
-                <textarea id="proj-vision" style="height: 150px; resize: none;" placeholder="Define la visión técnica aquí..."></textarea>
-
-                <button class="action-btn" onclick="window.initArchitectFlow()">INICIAR REFINAMIENTO</button>
-
-                <div id="arch-status" class="terminal-box" style="display:none; margin-top: 25px;">
-                    <p class="blink">> Conectando con el Orquestador...</p>
+                <div id="architect-input-area" style="margin-top: 30px; border-top: 1px solid var(--border-color); padding-top: 20px;">
+                    <span class="input-label">ESTABLECER VISIÓN</span>
+                    <textarea id="proj-vision" style="height: 80px; resize: none; margin-bottom: 10px;" placeholder="Ej: Sistema de agentes autónomos para ciberseguridad..."></textarea>
+                    <div style="display: flex; gap: 10px;">
+                        <input type="text" id="proj-name" placeholder="Nombre clave..." style="margin-bottom: 0; flex: 1;">
+                        <button class="action-btn" id="btn-deploy" onclick="window.initArchitectFlow()" style="width: 200px; padding: 12px;">INICIAR ASALTO</button>
+                    </div>
                 </div>
             </div>
 
@@ -297,19 +320,54 @@
     window.initArchitectFlow = async () => {
         const nombre = document.getElementById('proj-name').value;
         const vision = document.getElementById('proj-vision').value;
-        const statusBox = document.getElementById('arch-status');
-        if(!nombre || !vision) return alert("Faltan datos imperiales.");
+        const chatFlow = document.getElementById('architect-chat-flow');
+        const btn = document.getElementById('btn-deploy');
 
-        statusBox.style.display = "block";
+        if(!nombre || !vision) return alert("La visión imperial requiere datos completos.");
+
+        // 1. Mostrar mensaje del usuario en el chat
+        chatFlow.innerHTML += `
+        <div class="chat-msg msg-user">
+            <strong>${nombre.toUpperCase()}</strong><br>${vision}
+        </div>`;
+
+        btn.disabled = true;
+        btn.innerText = "VECTORIZANDO...";
+
         try {
-            const d = await AurelianCore.initProject(nombre, vision);
-            if (d.id) {
-                statusBox.innerHTML = `<p style="color:var(--terminal-green)">> [OK]: Proyecto #${d.id} registrado exitosamente.</p>`;
-                syncData();
-            }
+            const response = await AurelianCore.initProject(nombre, vision);
+
+            // FASE: REFINAMIENTO EXITOSO (Texto Profesional)
+            chatFlow.innerHTML += `
+            <div class="refinement-card">
+                <span class="badge-tech" style="background:var(--gold); color:black;">Requerimiento Profesionalizado</span>
+                <p style="font-family: 'Courier New'; font-size: 12px; color: var(--text-main);">
+                    ${response.vision_profesional || "PROYECTO REGISTRADO: Procediendo a desglose de features..."}
+                </p>
+                <div style="display:flex; gap:10px; margin-top:15px;">
+                    <button class="action-btn" style="padding:10px; font-size:10px;" onclick="window.switchModule('dashboard')">VER EN DASHBOARD</button>
+                    <button class="action-btn" style="padding:10px; font-size:10px; background:var(--panel-dark);">MODIFICAR SNAPSHOT</button>
+                </div>
+            </div>`;
+
         } catch (e) {
-            statusBox.innerHTML = `<p style="color:var(--error-red)">> ERROR: Fallo de enlace con el Core.</p>`;
+            // FASE: COLISIÓN (Qdrant encontró algo similar)
+            if (e.message.includes("409")) {
+                chatFlow.innerHTML += `
+                <div class="collision-card">
+                    <span class="badge-tech" style="background:var(--error-red);">Colisión Detectada</span>
+                    <p style="color:white;">Se encontró una iniciativa similar en el Tabularium.</p>
+                    <p style="font-size:11px; color:var(--text-dim); margin-top:5px;">ID Sugerido: <strong>#SENTINEL-X</strong> | Similitud: 89%</p>
+                    <button class="action-btn" style="margin-top:10px; background:var(--accent-secondary);">CONTACTAR PROPIETARIO</button>
+                </div>`;
+            } else {
+                chatFlow.innerHTML += `<div class="chat-msg msg-system" style="color:var(--error-red)">> ERROR: Enlace interrumpido con el Core.</div>`;
+            }
         }
+
+        btn.disabled = false;
+        btn.innerText = "INICIAR ASALTO";
+        chatFlow.scrollTop = chatFlow.scrollHeight;
     };
 
     window.logout = () => { localStorage.removeItem('aurelian_user'); window.location.href = "index.html"; };
