@@ -110,7 +110,15 @@
             display: block;
             margin-top: 15px;
         }
-
+        .blink {
+            animation: blinker 1.5s linear infinite;
+            color: var(--gold);
+            font-size: 11px;
+            font-weight: bold;
+        }
+        @keyframes blinker {
+            50% { opacity: 0; }
+        }
     </style>
 </head>
 <body>
@@ -341,34 +349,60 @@
 
         if(!nombre || !vision) return alert("La visión imperial requiere datos completos.");
 
-        // 1. Mostrar mensaje del usuario en el chat
+        console.log(`> [SISTEMA]: Iniciando flujo para proyecto: ${nombre}`);
+        console.log(`> [VISIÓN]: ${vision}`);
+
+        // 1. Mostrar mensaje del usuario
         chatFlow.innerHTML += `
         <div class="chat-msg msg-user">
             <strong>${nombre.toUpperCase()}</strong><br>${vision}
         </div>`;
 
+        // 2. Mostrar estado "TRABAJANDO"
+        const loadingId = `load-${Date.now()}`;
+        chatFlow.innerHTML += `
+        <div id="${loadingId}" class="chat-msg msg-system">
+            <span class="badge-tech" style="background:var(--gold); color:black;">PROCESANDO</span>
+            <p class="blink">ESTABLECIENDO ENLACE NEURAL... TRABAJANDO EN LA ESPECIFICACIÓN.</p>
+        </div>`;
+
         btn.disabled = true;
         btn.innerText = "VECTORIZANDO...";
+        chatFlow.scrollTop = chatFlow.scrollHeight;
 
         try {
-            const response = await AurelianCore.initProject(nombre, vision);
+            console.log("> [API]: Llamando a AurelianCore.initProject...");
+            const rawResponse = await AurelianCore.initProject(nombre, vision);
 
-            // FASE: RENDERIZADO DE ESPECIFICACIÓN PROFESIONAL
+            // TELEMETRÍA: Ver exactamente qué devolvió n8n
+            console.log("> [DEBUG]: Respuesta cruda del Core:", rawResponse);
+
+            // FIX ESTRUCTURAL: Manejo de array u objeto
+            const response = Array.isArray(rawResponse) ? rawResponse[0] : rawResponse;
+            console.log("> [DEBUG]: Objeto procesado para render:", response);
+
+            // 3. Eliminar mensaje de carga
+            const loadingEl = document.getElementById(loadingId);
+            if(loadingEl) loadingEl.remove();
+
+            // RENDERIZADO
             chatFlow.innerHTML += `
             <div class="refinement-card">
                 <span class="badge-tech" style="background:var(--gold); color:black;">ESPECIFICACIÓN TÉCNICA GENERADA</span>
 
                 <div class="document-container" style="margin-top:20px;">
                     <p class="input-label">PROYECTO:</p>
-                    <h3 style="color:var(--gold); margin-bottom:15px; font-family:'Cinzel';">${response.proyecto_nombre}</h3>
+                    <h3 style="color:var(--gold); margin-bottom:15px; font-family:'Cinzel';">
+                        ${response.proyecto_nombre || response.proyecto || "PROYECTO DCC"}
+                    </h3>
 
                     <p class="input-label">VISIÓN DE USUARIO (ORIGINAL):</p>
                     <p style="color:var(--text-dim); font-style:italic; margin-bottom:20px; font-size:12px; border-left: 2px solid var(--accent-primary); padding-left:10px;">
-                        "${response.vision_usuario}"
+                        "${response.vision_usuario || vision}"
                     </p>
 
                     <p class="input-label">DISEÑO ARQUITECTÓNICO:</p>
-                    <div class="document-body">${response.vision_profesional}</div>
+                    <div class="document-body">${response.vision_profesional || response.output || "Error al recuperar especificación."}</div>
                 </div>
 
                 <div style="display:flex; gap:10px; margin-top:25px;">
@@ -376,18 +410,21 @@
                     <button class="action-btn" style="padding:10px; font-size:10px; flex:1; background:var(--panel-dark);">RE-GENERAR SNAPSHOT</button>
                 </div>
             </div>`;
+
+            console.log("> [SISTEMA]: Renderizado completado con éxito.");
+
         } catch (e) {
-            // FASE: COLISIÓN O ERROR DE ENLACE
+            console.error("> [ERROR CRÍTICO]:", e);
+            if (document.getElementById(loadingId)) document.getElementById(loadingId).remove();
+
             if (e.message.includes("409")) {
-                chatFlow.innerHTML += `
-                <div class="collision-card">
-                    <span class="badge-tech" style="background:var(--error-red);">Colisión Detectada</span>
-                    <p style="color:white;">Se encontró una iniciativa similar en el Tabularium.</p>
-                    <p style="font-size:11px; color:var(--text-dim); margin-top:5px;">ID Sugerido: <strong>#SENTINEL-X</strong> | Similitud: 89%</p>
-                    <button class="action-btn" style="margin-top:10px; background:var(--accent-secondary);">CONTACTAR PROPIETARIO</button>
-                </div>`;
+                console.warn("> [SISTEMA]: Colisión detectada en el Tabularium.");
+                chatFlow.innerHTML += `<div class="collision-card">...</div>`;
             } else {
-                chatFlow.innerHTML += `<div class="chat-msg msg-system" style="color:var(--error-red)">> ERROR: Enlace interrumpido con el Core.</div>`;
+                chatFlow.innerHTML += `
+                <div class="chat-msg msg-system" style="color:var(--error-red)">
+                    > ERROR: Enlace interrumpido. Revisa la consola (F12).
+                </div>`;
             }
         }
 
