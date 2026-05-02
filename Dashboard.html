@@ -351,34 +351,33 @@
         btn.innerText = "VECTORIZANDO...";
 
         try {
-            try {
-                const response = await AurelianCore.initProject(nombre, vision);
+            const response = await AurelianCore.initProject(nombre, vision);
 
-                // FASE: RENDERIZADO DE ESPECIFICACIÓN PROFESIONAL
-                chatFlow.innerHTML += `
-    <div class="refinement-card">
-        <span class="badge-tech" style="background:var(--gold); color:black;">ESPECIFICACIÓN TÉCNICA GENERADA</span>
+            // FASE: RENDERIZADO DE ESPECIFICACIÓN PROFESIONAL
+            chatFlow.innerHTML += `
+            <div class="refinement-card">
+                <span class="badge-tech" style="background:var(--gold); color:black;">ESPECIFICACIÓN TÉCNICA GENERADA</span>
 
-        <div class="document-container" style="margin-top:20px;">
-            <p class="input-label">PROYECTO:</p>
-            <h3 style="color:var(--gold); margin-bottom:15px; font-family:'Cinzel';">${response.proyecto_nombre}</h3>
+                <div class="document-container" style="margin-top:20px;">
+                    <p class="input-label">PROYECTO:</p>
+                    <h3 style="color:var(--gold); margin-bottom:15px; font-family:'Cinzel';">${response.proyecto_nombre}</h3>
 
-            <p class="input-label">VISIÓN DE USUARIO (ORIGINAL):</p>
-            <p style="color:var(--text-dim); font-style:italic; margin-bottom:20px; font-size:12px; border-left: 2px solid var(--accent-primary); padding-left:10px;">
-                "${response.vision_usuario}"
-            </p>
+                    <p class="input-label">VISIÓN DE USUARIO (ORIGINAL):</p>
+                    <p style="color:var(--text-dim); font-style:italic; margin-bottom:20px; font-size:12px; border-left: 2px solid var(--accent-primary); padding-left:10px;">
+                        "${response.vision_usuario}"
+                    </p>
 
-            <p class="input-label">DISEÑO ARQUITECTÓNICO:</p>
-            <div class="document-body">${response.vision_profesional}</div>
-        </div>
+                    <p class="input-label">DISEÑO ARQUITECTÓNICO:</p>
+                    <div class="document-body">${response.vision_profesional}</div>
+                </div>
 
-        <div style="display:flex; gap:10px; margin-top:25px;">
-            <button class="action-btn" style="padding:10px; font-size:10px; flex:1;" onclick="window.switchModule('dashboard')">ENVIAR A BACKLOG</button>
-            <button class="action-btn" style="padding:10px; font-size:10px; flex:1; background:var(--panel-dark);">RE-GENERAR SNAPSHOT</button>
-        </div>
-    </div>`;
+                <div style="display:flex; gap:10px; margin-top:25px;">
+                    <button class="action-btn" style="padding:10px; font-size:10px; flex:1;" onclick="window.switchModule('dashboard')">ENVIAR A BACKLOG</button>
+                    <button class="action-btn" style="padding:10px; font-size:10px; flex:1; background:var(--panel-dark);">RE-GENERAR SNAPSHOT</button>
+                </div>
+            </div>`;
         } catch (e) {
-            // FASE: COLISIÓN (Qdrant encontró algo similar)
+            // FASE: COLISIÓN O ERROR DE ENLACE
             if (e.message.includes("409")) {
                 chatFlow.innerHTML += `
                 <div class="collision-card">
