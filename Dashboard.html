@@ -342,50 +342,54 @@
     };
 
     window.initArchitectFlow = async () => {
+        // 1. CAPTURA DE ELEMENTOS DEL DOM[cite: 1]
         const nombre = document.getElementById('proj-name').value;
         const vision = document.getElementById('proj-vision').value;
         const chatFlow = document.getElementById('architect-chat-flow');
         const btn = document.getElementById('btn-deploy');
 
+        // Validación de entrada imperial[cite: 1]
         if(!nombre || !vision) return alert("La visión imperial requiere datos completos.");
 
-        console.log(`> [SISTEMA]: Iniciando flujo para proyecto: ${nombre}`);
-        console.log(`> [VISIÓN]: ${vision}`);
+        // DISPLAYS DE TELEMETRÍA INICIAL
+        console.log(`> [SISTEMA]: Iniciando despliegue para: ${nombre}`);
+        console.log(`> [ENTRADA]: ${vision}`);
 
-        // 1. Mostrar mensaje del usuario
+        // 2. RENDERIZADO DEL MENSAJE DEL USUARIO[cite: 1]
         chatFlow.innerHTML += `
         <div class="chat-msg msg-user">
             <strong>${nombre.toUpperCase()}</strong><br>${vision}
         </div>`;
 
-        // 2. Mostrar estado "TRABAJANDO"
+        // 3. ESTADO "TRABAJANDO" (LOADING UI)
         const loadingId = `load-${Date.now()}`;
         chatFlow.innerHTML += `
         <div id="${loadingId}" class="chat-msg msg-system">
             <span class="badge-tech" style="background:var(--gold); color:black;">PROCESANDO</span>
-            <p class="blink">ESTABLECIENDO ENLACE NEURAL... TRABAJANDO EN LA ESPECIFICACIÓN.</p>
+            <p class="blink">ESTABLECIENDO ENLACE NEURAL... GENERANDO ESPECIFICACIÓN TÉCNICA.</p>
         </div>`;
 
+        // Bloqueo de UI para evitar colisiones[cite: 1]
         btn.disabled = true;
         btn.innerText = "VECTORIZANDO...";
         chatFlow.scrollTop = chatFlow.scrollHeight;
 
         try {
-            console.log("> [API]: Llamando a AurelianCore.initProject...");
+            console.log("> [API]: Solicitando inicialización al Core...");
             const rawResponse = await AurelianCore.initProject(nombre, vision);
 
-            // TELEMETRÍA: Ver exactamente qué devolvió n8n
-            console.log("> [DEBUG]: Respuesta cruda del Core:", rawResponse);
+            // TELEMETRÍA DE RESPUESTA
+            console.log("> [DEBUG]: Respuesta cruda recibida:", rawResponse);
 
-            // FIX ESTRUCTURAL: Manejo de array u objeto
+            // NORMALIZACIÓN ESTRUCTURAL (Evita el error 'undefined' si n8n manda un array)
             const response = Array.isArray(rawResponse) ? rawResponse[0] : rawResponse;
-            console.log("> [DEBUG]: Objeto procesado para render:", response);
+            console.log("> [DEBUG]: Objeto mapeado para render:", response);
 
-            // 3. Eliminar mensaje de carga
+            // 4. LIMPIEZA DE CARGA
             const loadingEl = document.getElementById(loadingId);
             if(loadingEl) loadingEl.remove();
 
-            // RENDERIZADO
+            // 5. RENDERIZADO DE LA ESPECIFICACIÓN FINAL[cite: 1]
             chatFlow.innerHTML += `
             <div class="refinement-card">
                 <span class="badge-tech" style="background:var(--gold); color:black;">ESPECIFICACIÓN TÉCNICA GENERADA</span>
@@ -393,16 +397,18 @@
                 <div class="document-container" style="margin-top:20px;">
                     <p class="input-label">PROYECTO:</p>
                     <h3 style="color:var(--gold); margin-bottom:15px; font-family:'Cinzel';">
-                        ${response.proyecto_nombre || response.proyecto || "PROYECTO DCC"}
+                        ${response.nombre || response.proyecto_nombre || "PROYECTO SIN NOMBRE"}
                     </h3>
 
                     <p class="input-label">VISIÓN DE USUARIO (ORIGINAL):</p>
                     <p style="color:var(--text-dim); font-style:italic; margin-bottom:20px; font-size:12px; border-left: 2px solid var(--accent-primary); padding-left:10px;">
-                        "${response.vision_usuario || vision}"
+                        "${response.vision || response.vision_usuario || vision}"
                     </p>
 
                     <p class="input-label">DISEÑO ARQUITECTÓNICO:</p>
-                    <div class="document-body">${response.vision_profesional || response.output || "Error al recuperar especificación."}</div>
+                    <div class="document-body">
+                        ${response.vision_profesional || response.output || "MENSAJE: El Core no devolvió una especificación técnica válida."}
+                    </div>
                 </div>
 
                 <div style="display:flex; gap:10px; margin-top:25px;">
@@ -411,23 +417,30 @@
                 </div>
             </div>`;
 
-            console.log("> [SISTEMA]: Renderizado completado con éxito.");
+            console.log("> [SISTEMA]: Renderizado de arquitectura completado.");
 
         } catch (e) {
-            console.error("> [ERROR CRÍTICO]:", e);
+            console.error("> [ERROR]: Fallo en la comunicación neural.", e);
+
+            // Eliminar loading en caso de error
             if (document.getElementById(loadingId)) document.getElementById(loadingId).remove();
 
             if (e.message.includes("409")) {
                 console.warn("> [SISTEMA]: Colisión detectada en el Tabularium.");
-                chatFlow.innerHTML += `<div class="collision-card">...</div>`;
+                chatFlow.innerHTML += `
+                <div class="collision-card">
+                    <span class="badge-tech" style="background:var(--error-red);">Colisión Detectada</span>
+                    <p style="color:white;">Se encontró una iniciativa similar en el Tabularium.</p>
+                </div>`;
             } else {
                 chatFlow.innerHTML += `
                 <div class="chat-msg msg-system" style="color:var(--error-red)">
-                    > ERROR: Enlace interrumpido. Revisa la consola (F12).
+                    > ERROR: Enlace interrumpido con el Core. Revisa la consola (F12).
                 </div>`;
             }
         }
 
+        // 6. RESTAURACIÓN DE INTERFAZ[cite: 1]
         btn.disabled = false;
         btn.innerText = "INICIAR ASALTO";
         chatFlow.scrollTop = chatFlow.scrollHeight;
