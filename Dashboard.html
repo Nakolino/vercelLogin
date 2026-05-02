@@ -94,6 +94,22 @@
             padding: 20px; border-radius: 12px; margin-top: 15px;
         }
         .badge-tech { font-size: 10px; background: var(--accent-primary); color: white; padding: 2px 8px; border-radius: 4px; text-transform: uppercase; margin-bottom: 10px; display: inline-block; }
+        .document-body {
+            white-space: pre-wrap; /* Mantiene los saltos de línea y formato del LLM */
+            font-family: 'Inter', sans-serif;
+            line-height: 1.7;
+            background: rgba(0, 0, 0, 0.3);
+            padding: 25px;
+            border-radius: 8px;
+            border: 1px solid var(--border-color);
+            font-size: 13px;
+            color: var(--text-main);
+        }
+        .document-body h3, .document-body strong {
+            color: var(--accent-primary);
+            display: block;
+            margin-top: 15px;
+        }
 
     </style>
 </head>
@@ -335,21 +351,32 @@
         btn.innerText = "VECTORIZANDO...";
 
         try {
-            const response = await AurelianCore.initProject(nombre, vision);
+            try {
+                const response = await AurelianCore.initProject(nombre, vision);
 
-            // FASE: REFINAMIENTO EXITOSO (Texto Profesional)
-            chatFlow.innerHTML += `
-            <div class="refinement-card">
-                <span class="badge-tech" style="background:var(--gold); color:black;">Requerimiento Profesionalizado</span>
-                <p style="font-family: 'Courier New'; font-size: 12px; color: var(--text-main);">
-                    ${response.vision_profesional || "PROYECTO REGISTRADO: Procediendo a desglose de features..."}
-                </p>
-                <div style="display:flex; gap:10px; margin-top:15px;">
-                    <button class="action-btn" style="padding:10px; font-size:10px;" onclick="window.switchModule('dashboard')">VER EN DASHBOARD</button>
-                    <button class="action-btn" style="padding:10px; font-size:10px; background:var(--panel-dark);">MODIFICAR SNAPSHOT</button>
-                </div>
-            </div>`;
+                // FASE: RENDERIZADO DE ESPECIFICACIÓN PROFESIONAL
+                chatFlow.innerHTML += `
+    <div class="refinement-card">
+        <span class="badge-tech" style="background:var(--gold); color:black;">ESPECIFICACIÓN TÉCNICA GENERADA</span>
 
+        <div class="document-container" style="margin-top:20px;">
+            <p class="input-label">PROYECTO:</p>
+            <h3 style="color:var(--gold); margin-bottom:15px; font-family:'Cinzel';">${response.proyecto_nombre}</h3>
+
+            <p class="input-label">VISIÓN DE USUARIO (ORIGINAL):</p>
+            <p style="color:var(--text-dim); font-style:italic; margin-bottom:20px; font-size:12px; border-left: 2px solid var(--accent-primary); padding-left:10px;">
+                "${response.vision_usuario}"
+            </p>
+
+            <p class="input-label">DISEÑO ARQUITECTÓNICO:</p>
+            <div class="document-body">${response.vision_profesional}</div>
+        </div>
+
+        <div style="display:flex; gap:10px; margin-top:25px;">
+            <button class="action-btn" style="padding:10px; font-size:10px; flex:1;" onclick="window.switchModule('dashboard')">ENVIAR A BACKLOG</button>
+            <button class="action-btn" style="padding:10px; font-size:10px; flex:1; background:var(--panel-dark);">RE-GENERAR SNAPSHOT</button>
+        </div>
+    </div>`;
         } catch (e) {
             // FASE: COLISIÓN (Qdrant encontró algo similar)
             if (e.message.includes("409")) {
